@@ -4,7 +4,7 @@ public class PilhaDuplaEncad implements IPilha{
   private int tamanho;
 
   public PilhaDuplaEncad(){
-    this.topo =topo;
+    this.topo = topo;
     this.tamanho = 0;
   }
 

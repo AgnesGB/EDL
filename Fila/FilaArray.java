@@ -53,7 +53,7 @@ public class FilaArray implements IFila {
     public void enqueue(Object o){
         
         if (tamanho == fila.length) {
-           //incrementar();
+           //incrementar(); Só pra ter ><
             duplicar();
         }
         

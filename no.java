@@ -1,4 +1,4 @@
-class no {
+public class no {
   Object valor;
   no proximo;
   no anterior;

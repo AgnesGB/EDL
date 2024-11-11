@@ -36,23 +36,25 @@ public class vectorArray implements Ivector {
 
     @Override
     public void insertAtRank(int r, Object o) {
+        // Verifica se o índice está dentro do intervalo válido
+        if (r < 0 || r > size) {
+            throw new IndexOutOfBoundsException("Rank " + r + " is out of bounds");
+        }
     
         // Redimensiona o array se a capacidade for atingida
         if (size == capacity) {
             duplicar();
         }
     
-        // Desloca os elementos à direita para abrir espaço
-        // Percorre de trás para frente para evitar sobrescrever elementos
-        for (int i = size - 1; i >= r; i--) {
-            a[convertIndex(i + 1)] = a[convertIndex(i)];
+        // Desloca os elementos para a direita, da direita para a esquerda
+        for (int i = size; i > r; i--) {
+            a[convertIndex(i)] = a[convertIndex(i - 1)];
         }
     
         // Insere o novo elemento no índice correto
         a[convertIndex(r)] = o;
     
-    
-        // Atualiza o tamanho
+        // Atualiza o tamanho do vetor
         size++;
     }
 

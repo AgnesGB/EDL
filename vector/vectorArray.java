@@ -37,7 +37,7 @@ public class vectorArray implements Ivector {
     @Override
     public void insertAtRank(int r, Object o) {
         // Verifica se o índice está dentro do intervalo válido
-        if (r < 0 || r > size) {
+        if (r < 0 || r > capacity) {
             throw new IndexOutOfBoundsException("Rank " + r + " is out of bounds");
         }
     

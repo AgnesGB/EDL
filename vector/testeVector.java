@@ -2,26 +2,33 @@ package vector;
 
 public class testeVector {
     public static void main(String[] args) {
-        vectorArray a = new vectorArray(10);  // Capacidade 10
+        vectorArray vector = new vectorArray(10);
+
+        System.out.println("Inicialmente o vetor está vazio? " + vector.isEmpty());
         
-        // Inserindo o primeiro elemento na posição 0
-        a.insertAtRank(0, 3);                 // Inserir 3 na posição 0
-        System.out.println(a.toString());     // Esperado: [3, null, null, null, ...]
+        System.out.println("\n--- Teste de inserção ---");
+        vector.insertAtRank(0, 1);
+        vector.insertAtRank(1, 2);
+        vector.insertAtRank(2, 3);
+        vector.insertAtRank(1, 4);
+        System.out.println("Após inserções: " + vector.toString());
         
-        // Inserindo elementos em outras posições
-        a.insertAtRank(1, 2);                 // Inserir 2 na posição 1
-        System.out.println(a.toString());     // Esperado: [3, 2, null, null, ...]
+        System.out.println("\nTamanho do vetor: " + vector.size());
         
-        a.insertAtRank(1, 4);                 // Inserir 4 na posição 2
-        System.out.println(a.toString());     // Esperado: [3, 2, 4, null, ...]
+        System.out.println("\n--- Teste de remoção ---");
+        Object removedElement = vector.RemoveAtRank(1);
+        System.out.println("Elemento removido: " + removedElement);
+        System.out.println("Após remoção: " + vector.toString());
+
+        removedElement = vector.RemoveAtRank(0);
+        System.out.println("Elemento removido: " + removedElement);
+        System.out.println("Após remoção: " + vector.toString());
+
+        System.out.println("\nO vetor está vazio? " + vector.isEmpty());
         
-        a.insertAtRank(1, 5);                 // Inserir 5 na posição 1 (deslocando 2 e 4)
-        System.out.println(a.toString());     // Esperado: [3, 5, 2, 4, null, ...]
-        a.RemoveAtRank(1);
-        System.out.println(a.toString());
-        a.RemoveAtRank(0);
-        System.out.println(a.toString()); 
-        a.ReplaceAtRank(1, "J");
-        System.out.println(a.toString()); 
+        vector.RemoveAtRank(0);
+        vector.RemoveAtRank(0);
+        System.out.println("Após todas as remoções: " + vector.toString());
+        System.out.println("O vetor está vazio? " + vector.isEmpty());
     }
 }

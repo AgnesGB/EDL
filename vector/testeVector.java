@@ -8,9 +8,10 @@ public class testeVector {
         
         System.out.println("\n--- Teste de inserção ---");
         vector.insertAtRank(0, 1);
-        vector.insertAtRank(1, 2);
-        vector.insertAtRank(2, 3);
+        vector.insertAtRank(1, 5);
         vector.insertAtRank(1, 4);
+        vector.insertAtRank(1, 3);
+        vector.insertAtRank(1, 2);
         System.out.println("Após inserções: " + vector.toString());
         
         System.out.println("\nTamanho do vetor: " + vector.size());
@@ -26,6 +27,7 @@ public class testeVector {
 
         System.out.println("\nO vetor está vazio? " + vector.isEmpty());
         
+        vector.RemoveAtRank(0);
         vector.RemoveAtRank(0);
         vector.RemoveAtRank(0);
         System.out.println("Após todas as remoções: " + vector.toString());

@@ -17,5 +17,11 @@ public class testeVector {
         
         a.insertAtRank(1, 5);                 // Inserir 5 na posição 1 (deslocando 2 e 4)
         System.out.println(a.toString());     // Esperado: [3, 5, 2, 4, null, ...]
+        a.RemoveAtRank(1);
+        System.out.println(a.toString());
+        a.RemoveAtRank(0);
+        System.out.println(a.toString()); 
+        a.ReplaceAtRank(1, "J");
+        System.out.println(a.toString()); 
     }
 }

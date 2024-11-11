@@ -58,6 +58,35 @@ public class vectorArray implements Ivector {
         size++;
     }
 
+    @Override
+    public Object RemoveAtRank(int r){
+
+        if ( r < 0 || r>=size){
+            throw new IndexOutOfBoundsException("Rank " + r + " is out of bounds");
+        }
+
+        Object removedObject = a[convertIndex(r)];
+        for (int i =r; i < size - 1; i++){
+            a[convertIndex(i)] = a[convertIndex(i + 1)];
+        }
+
+        a[convertIndex(size - 1)] = null;
+        size--;
+
+    return removedObject;
+
+    }
+
+    @Override
+    public int size(){
+        return size;
+    }
+
+    @Override
+    public boolean isEmpty(){
+        return size == 0;
+    }
+
     private int convertIndex(int r) {
         return (first + r) % capacity;
     }

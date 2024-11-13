@@ -11,12 +11,14 @@ public class testeVector {
         vector.insertAtRank(1, 3);
         vector.insertAtRank(1, 2);
         vector.insertAtRank(1, 10);
+        vector.insertAtRank(2, 10);
+        System.out.println("Após inserções: " + vector.toString());
         vector.insertAtRank(0, 'j');
         System.out.println("Após inserções: " + vector.toString());
         
         System.out.println("\nTamanho do vetor: " + vector.size());
         
-        /*System.out.println("\n--- Teste de remoção ---");
+        System.out.println("\n--- Teste de remoção ---");
         Object removedElement = vector.RemoveAtRank(1);
         System.out.println("Elemento removido: " + removedElement);
         System.out.println("Após remoção: " + vector.toString());
@@ -31,6 +33,6 @@ public class testeVector {
         vector.RemoveAtRank(0);
         vector.RemoveAtRank(0);
         System.out.println("Após todas as remoções: " + vector.toString());
-        System.out.println("O vetor está vazio? " + vector.isEmpty());*/
+        System.out.println("O vetor está vazio? " + vector.isEmpty());
     }
 }

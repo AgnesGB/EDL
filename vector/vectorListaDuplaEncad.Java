@@ -6,8 +6,10 @@ public class vectorListaDuplaEncad implements Ivector{
 
     public vectorListaDuplaEncad(){
         this.tamanho = 0;
-        this.head = null;
-        this.tail = null;
+        this.head = new no (null);
+        this.tail = new no(null);
+        head.setProximo(tail);
+        tail.setAnterior(head); 
         
     }
 
@@ -79,7 +81,7 @@ public class vectorListaDuplaEncad implements Ivector{
 
     @Override
     public Object RemoveAtRank(int r){
-        no novoNo =  new no(head.getProximo());
+        no novoNo =  head.getProximo();
         int i = 0;
         while (i != r){
         

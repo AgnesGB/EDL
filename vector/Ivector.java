@@ -1,5 +1,3 @@
-package vector;
-
 interface Ivector {
 
     public Object elemAtRank(int r);

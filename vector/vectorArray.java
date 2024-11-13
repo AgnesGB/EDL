@@ -1,5 +1,3 @@
-package vector;
-
 public class vectorArray implements Ivector {
 //tentando fazer com array circular
     

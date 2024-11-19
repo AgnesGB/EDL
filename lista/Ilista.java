@@ -1,5 +1,3 @@
-package lista;
-
 interface Ilista {
 
         

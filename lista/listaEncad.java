@@ -1,4 +1,4 @@
-package lista;
+
 
 public class listaEncad implements Ilista {
     private no head;
@@ -39,7 +39,7 @@ public class listaEncad implements Ilista {
     @Override
     public no first() {
         if (isEmpty()) throw new IllegalStateException("A lista está vazia.");
-        return header.proximo;
+        return head.proximo;
     }
 
     @Override
@@ -50,13 +50,13 @@ public class listaEncad implements Ilista {
 
     @Override
     public no before(no p){
-    if (p == header) throw new IllegalArgumentException("Nó inválido.");
+    if (p == head) throw new IllegalArgumentException("Nó inválido.");
         return p.anterior;
     }
 
     @Override
     public no after(no p){
-        if (p == header) throw new IllegalArgumentException("Nó inválido.");
+        if (p == head) throw new IllegalArgumentException("Nó inválido.");
             return p.proximo;
     }
     
@@ -66,7 +66,7 @@ public class listaEncad implements Ilista {
     }
 
     @Override
-    public void swapElements(no n, Object q){
+    public void swapElements(no n, no q){
 
         Object temp = n.valor;
         n.valor = q.valor;
@@ -123,9 +123,9 @@ public class listaEncad implements Ilista {
             return;
         }
     
-        no atual = sentinelaInicio.proximo; // Começa após o sentinela inicial
+        no atual = head.proximo; // Começa após o sentinela inicial
         System.out.print("Elementos da lista: ");
-        while (atual != sentinelaFim) { // Para antes do sentinela final
+        while (atual != tail) { // Para antes do sentinela final
             System.out.print(atual.valor + " ");
             atual = atual.proximo;
         }

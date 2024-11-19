@@ -12,7 +12,7 @@ public class TesteListaEncad {
         lista.insertFirst(5);
         lista.insertLast(25);
         System.out.println("Após inserções: ");
-        exibirLista(lista);
+        lista.exibirLista();
 
         System.out.println("\nTestando acesso:");
         System.out.println("Primeiro elemento: " + lista.first().valor);
@@ -29,35 +29,28 @@ public class TesteListaEncad {
         System.out.println("\nTestando atualizações:");
         lista.replaceElement(lista.first(), 50);
         System.out.println("Primeiro elemento substituído por 50:");
-        exibirLista(lista);
+        lista.exibirLista();
 
         lista.swapElements(lista.first(), lista.last());
         System.out.println("Primeiro e último elementos trocados:");
-        exibirLista(lista);
+        lista.exibirLista();
 
         System.out.println("\nTestando inserção antes/depois:");
         lista.insertBefore(lista.first().proximo, 15);
         lista.insertAfter(lista.last().anterior, 22);
         System.out.println("Após inserções antes e depois:");
-        exibirLista(lista);
+        lista.exibirLista();
 
         System.out.println("\nTestando remoção:");
         lista.remove(lista.first());
         lista.remove(lista.last());
         System.out.println("Após remover primeiro e último elementos:");
-        exibirLista(lista);
+        lista.exibirLista();
 
         System.out.println("\nEstado final:");
         System.out.println("Tamanho da lista: " + lista.size());
         System.out.println("A lista está vazia? " + lista.isEmpty());
     }
 
-    private static void exibirLista(ListaDuplamenteEncadeada lista) {
-        ListaDuplamenteEncadeada.no atual = lista.first();
-        while (atual != lista.last().proximo) {
-            System.out.print(atual.valor + " ");
-            atual = atual.proximo;
-        }
-        System.out.println();
-    }
+    
 }

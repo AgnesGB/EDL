@@ -1,8 +1,6 @@
 package deque;
 import java.util.ArrayList;
 
-import javax.print.DocFlavor.INPUT_STREAM;
-
 public class dequeArray {
     private ArrayList<Object> data;
     private int size; //quantidade de elementos
@@ -19,30 +17,33 @@ public class dequeArray {
         if (data.isEmpty()){
             data.add(o);
             size++;
-        } 
-        for (int i=size;i > 0; i--){
-            data.add(i,data.get(i - 1));
+        } else{ 
+            for (int i=size;i > 0; i--){
+                data.add(0);
+                data.set(i, data.get(i - 1));
+            }
+            data.set(0,o);
+            size ++;
         }
-        data.add(0,o);
-        size ++;
+        
     }
 
     public Object removerInicio(){
+        Object temp = data.get(0);
         if (estaVazio()){
             throw new IndexOutOfBoundsException("Ta vazia");
-        }
-        Object temp = data.get(0);
-        for (int i=0;i < size; i++){
-            data.add(i,data.get(i + 1));
-        }
+        }else{
+            for (int i=0;i < size; i++){
+                data.set(i,data.get(i + 1));
+            }
         size --;
+        }
         return temp;
     }
 
     
     public void inserirFim(Object o){
-
-        data.add(o);
+        data.add(size, o);
         size++;
     }
 
@@ -84,6 +85,15 @@ public class dequeArray {
         if (size == 0){
             return true;
         } else {return false;}
+    }
+
+    public void exibirDeque() {
+        System.out.print("Deque: [");
+        for (int x = 0; x < size; x++) {
+            System.out.print(data.get(x));
+            System.out.print(", ");
+        }
+        System.out.println("]");
     }
 }
 

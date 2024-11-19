@@ -92,8 +92,8 @@ public class listaEncad implements Ilista {
         no novoNo = new no(q);
         novoNo.anterior = n.anterior;
         novoNo.proximo = n;
-        n.anterior = novoNo;
         (n.anterior).proximo = novoNo; 
+        n.anterior = novoNo;
         tamanho ++;
 
     }

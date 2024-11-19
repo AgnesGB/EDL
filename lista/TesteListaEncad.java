@@ -11,6 +11,7 @@ public class TesteListaEncad {
         lista.insertLast(20);
         lista.insertFirst(5);
         lista.insertLast(25);
+        System.out.println("A lista está vazia? " + lista.isEmpty());
         System.out.println("Após inserções: ");
         lista.exibirLista();
 

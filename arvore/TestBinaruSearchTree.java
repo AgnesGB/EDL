@@ -17,15 +17,11 @@ public class TestBinaruSearchTree{
     System.out.println("Árvore Inicial:");
     bst.display();
 
-    /* Inserir 25
-    bst.insert(25);
-    System.out.println("\nApós inserir 25:");
-    bst.display();
-
+    
     // Remover 5
     bst.remove(5);
     System.out.println("\nApós remover 5:");
     bst.display();
-    } */ 
+    } 
 }
-}
+

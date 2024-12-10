@@ -51,52 +51,33 @@ public class BinarySearchTree {
     
         Integer currentValue = (Integer) current.element();
     
-        if (value < currentValue) {
-            if (current.childrenNumber() > 0) {
-                No leftChild = (No) current.children().next();
-                removeRecursive(leftChild, value);
-            }
-        } else if (value > currentValue) {
-            Iterator<No> iterator = current.children();
-            if (current.childrenNumber() > 1) {
-                iterator.next(); // Ignorar o filho esquerdo
-                No rightChild = iterator.next();
-                removeRecursive(rightChild, value);
-            }
-        } else {
-            // Caso folha
-            if (current.childrenNumber() == 0) {
-                if (current.parent() != null) {
-                    current.parent().removeChild(current);
-                } else {
-                    root = null; // Removendo a raiz
-                }
-            }
-            // Caso com 1 filho
-            else if (current.childrenNumber() == 1) {
-                No child = (No) current.children().next();
-                if (current.parent() != null) {
-                    current.parent().removeChild(current);
-                    current.parent().addChild(child);
-                } else {
-                    root = child; // Atualizando a raiz
-                }
-            }
-            // Caso com 2 filhos
-            else {
-                No rightChild = (No) current.children().next();
+        if (value < currentValue) { // Procurar no lado esquerdo
+            No leftChild = current.getLeftChild();
+            current.setLeftChild(removeRecursive(leftChild, value));
+        } else if (value > currentValue) { // Procurar no lado direito
+            No rightChild = current.getRightChild();
+            current.setRightChild(removeRecursive(rightChild, value));
+        } else { // Encontrou o nó a ser removido
+            if (current.getLeftChild() == null && current.getRightChild() == null) {
+                return null; // Nó folha
+            } else if (current.getLeftChild() == null) {
+                return current.getRightChild(); // Apenas filho direito
+            } else if (current.getRightChild() == null) {
+                return current.getLeftChild(); // Apenas filho esquerdo
+            } else {
+                // Dois filhos: substituir pelo menor valor do lado direito
+                No rightChild = current.getRightChild();
                 Integer minValue = findMinValue(rightChild);
                 current.setElement(minValue);
-                removeRecursive(rightChild, minValue);
+                current.setRightChild(removeRecursive(rightChild, minValue));
             }
         }
         return current;
     }
     
-
     private Integer findMinValue(No node) {
-        while (node.childrenNumber() > 0) {
-            node = (No) node.children().next();
+        while (node.getLeftChild() != null) {
+            node = node.getLeftChild();
         }
         return (Integer) node.element();
     }

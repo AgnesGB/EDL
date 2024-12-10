@@ -99,7 +99,33 @@ public class BinarySearchTree {
         displayRecursive(node.getLeftChild(), depth + 1);
     }
     
+    public No search(Integer chave){
 
+        return searchRecurssive(root, chave);
+    }
+
+    private No searchRecurssive(No current, Integer value){
+        if (current.o == value){
+            return current;
+        }
+        if (current == null) {
+            return null;
+        }
+    
+        Integer currentValue = (Integer) current.element();
+        
+        
+        if (value < currentValue) { // Procurar no lado esquerdo
+            No leftChild = current.getLeftChild();
+            current.setLeftChild(searchRecurssive(leftChild, value));
+            
+        } else if (value > currentValue) { // Procurar no lado direito
+            No rightChild = current.getRightChild();
+            current.setRightChild(searchRecurssive(rightChild, value));
+            }
+        return current;
+    }
+    
     public class No 
 	{
 		private Object o;

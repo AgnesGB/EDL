@@ -99,93 +99,25 @@ public class BinarySearchTree {
         displayRecursive(node.getLeftChild(), depth + 1);
     }
     
-    public No search(Integer chave){
-
-        return searchRecurssive(root, chave);
+    public No search(Integer key, No current) {
+    if (current == null) { // Caso base: Nó não encontrado
+        return null;
     }
 
-    private No searchRecurssive(No current, Integer value){
-        if (current.o == value){
-            return current;
-        }
-        if (current == null) {
-            return null;
-        }
-    
-        Integer currentValue = (Integer) current.element();
-        
-        
-        if (value < currentValue) { // Procurar no lado esquerdo
-            No leftChild = current.getLeftChild();
-            current.setLeftChild(searchRecurssive(leftChild, value));
-            
-        } else if (value > currentValue) { // Procurar no lado direito
-            No rightChild = current.getRightChild();
-            current.setRightChild(searchRecurssive(rightChild, value));
-            }
+    Integer currentValue = (Integer) current.element();
+
+    if (key.equals(currentValue)) { // Caso base: Encontrou o nó
         return current;
+    } else if (key < currentValue) { // Buscar no lado esquerdo
+        return search(key, current.getLeftChild());
+    } else { // Buscar no lado direito
+        return search(key, current.getRightChild());
     }
-    
-    public class No 
-	{
-		private Object o;
-		private No pai;
-		private ArrayList filhos = new ArrayList();
-		public No(No pai, Object o)
-		{
-			this.pai = pai;
-			this.o = o;
-		}
-		public Object element()
-		{
-			return o;
-		}
-		public No parent()
-		{
-			return pai;
-		}
-		public void setElement(Object o)
-		{
-			this.o = o;
-		}
-		public void addChild(No o)
-		{
-			filhos.add(o);
-		}
-		public void removeChild(No o)
-		{
-			filhos.remove(o);
-		}
-		public int childrenNumber()
-		{
-			return filhos.size();
-		}
-		public Iterator children()
-		{
-			return filhos.iterator();
-		}
-        public No getLeftChild() {
-            return filhos.size() > 0 ? (No) filhos.get(0) : null;
-        }
-        
-        public No getRightChild() {
-            return filhos.size() > 1 ? (No) filhos.get(1) : null;
-        }
-        
-        public void setLeftChild(No child) {
-            if (filhos.size() > 0) {
-                filhos.set(0, child);
-            } else {
-                filhos.add(child);
-            }
-        }
-        
-        public void setRightChild(No child) {
-            if (filhos.size() > 1) {
-                filhos.set(1, child);
-            } else if (filhos.size() == 1) {
-                filhos.add(child);
-            }
-        }
-	}
+}
+ 
+    public No getRoot(){
+
+        return root;
+
+    }
 }

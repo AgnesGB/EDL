@@ -1,3 +1,4 @@
+
 public class TestBinaruSearchTree{
     public static void main(String[] args) {
         BinarySearchTree bst = new BinarySearchTree();
@@ -5,12 +6,12 @@ public class TestBinaruSearchTree{
     // Inserções
     bst.insert(10);
     bst.insert(5);
-    bst.insert(22);
+    bst.insert(15);
     bst.insert(2);
     bst.insert(8);
     bst.insert(1);
     bst.insert(3);
-    bst.insert(15);
+    bst.insert(22);
     bst.insert(25);
     bst.insert(14);
     
@@ -23,8 +24,9 @@ public class TestBinaruSearchTree{
     bst.remove(22);
     System.out.println("\nApós remover 2:");
     bst.display();
-
-    System.out.println(bst.search(1).element());
+    No root = bst.getRoot();
+    No result = bst.search(3,root);
+    System.out.println("Valor encontrado: " + result.element());
     } 
 }
 

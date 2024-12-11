@@ -52,13 +52,12 @@ public class ArvoreSimples
 	/** Remove um No
 	 *  S� pode remover Nos externos e que tenham um pai (n�o seja raiz)
 	*/
-	public Object remove(No v) throws InvalidNoException
+	public Object remove(No v)
 	{
 		No pai = v.parent();
-		if (pai != null || isExternal(v))
+		if (pai != null || isExternal(v)){
 			pai.removeChild(v);
-		else
-			throw new InvalidNoException();
+		}
 		Object o = v.element();
 		tamanho--;
 		return o;
@@ -119,9 +118,18 @@ public class ArvoreSimples
 	{
 		return false;
 	}
+
+	public No search(Integer chave, No root){
+
+		No searchNo = root;
+
+		for(No currentNo: searchNo.filhos )
+
+	}
+
 	public Object replace(No v, Object o)
 	{
-	 // M�todo que serve de exerc�cio
+		for  
 		return null;
 	}
 	/* In�cio da classe aninhada para armazenar o No*/

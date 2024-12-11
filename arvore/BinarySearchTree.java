@@ -101,7 +101,7 @@ public class BinarySearchTree {
     
     public No search(Integer key, No current) {
     if (current == null) { // Caso base: Nó não encontrado
-        return null;
+         throw new NullPointerException("Encontramo nao man :/");
     }
 
     Integer currentValue = (Integer) current.element();

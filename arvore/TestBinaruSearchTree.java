@@ -11,6 +11,18 @@ public class TestBinaruSearchTree{
     bst.insert(5);
     bst.insert(2);
     bst.insert(3);
+    bst.insert(8);
+    bst.insert(17);
+    bst.insert(20);
+    bst.insert(1);
+    bst.insert(6);
+    bst.insert(24);
+    bst.insert(13);
+    bst.insert(4);
+        
+
+
+
     
     
     // Mostrar a árvore
@@ -19,11 +31,11 @@ public class TestBinaruSearchTree{
 
     
     // Remover 25
-    bst.remove(2);
+    bst.remove(34);
     System.out.println("\nApós remover 2:");
     bst.display();
     No root = bst.getRoot();
-    No result = bst.search(3,root);
+    No result = bst.search(2,root);
     System.out.println("Valor encontrado: " + result.element());
     } 
 }

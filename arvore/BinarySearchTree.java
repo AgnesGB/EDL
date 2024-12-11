@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 public class BinarySearchTree {
@@ -9,31 +10,30 @@ public class BinarySearchTree {
         this.root = null;
     }
 
-    // Inserir um valor na árvore
-    public void insert(Integer value) {
+    public void insert(Integer key) {
         if (root == null) {
-            root = new No(null, value);
+            root = new No(null, key); // Cria a raiz se a árvore estiver vazia
         } else {
-            insertRecursive(root, value);
+            insertRecursive(root, key);
         }
     }
-
-    private void insertRecursive(No current, Integer value) {
+    
+    private void insertRecursive(No current, Integer key) {
         Integer currentValue = (Integer) current.element();
     
-        if (value < currentValue) { // Inserir no lado esquerdo
-            No leftChild = current.getLeftChild();
-            if (leftChild != null) {
-                insertRecursive(leftChild, value);
+        if (key < currentValue) { // Inserir no lado esquerdo
+            if (current.getLeftChild() == null) {
+                No newNode = new No(current, key); // Cria um novo nó
+                current.setLeftChild(newNode); // Define como filho esquerdo
             } else {
-                current.setLeftChild(new No(current, value));
+                insertRecursive(current.getLeftChild(), key); // Continua no lado esquerdo
             }
-        } else if (value > currentValue) { // Inserir no lado direito
-            No rightChild = current.getRightChild();
-            if (rightChild != null) {
-                insertRecursive(rightChild, value);
+        } else if (key > currentValue) { // Inserir no lado direito
+            if (current.getRightChild() == null) {
+                No newNode = new No(current, key); // Cria um novo nó
+                current.setRightChild(newNode); // Define como filho direito
             } else {
-                current.setRightChild(new No(current, value));
+                insertRecursive(current.getRightChild(), key); // Continua no lado direito
             }
         }
     }
@@ -94,7 +94,7 @@ public class BinarySearchTree {
     
         // Exibir o lado direito primeiro
         displayRecursive(node.getRightChild(), depth + 1);
-        System.out.println(" ".repeat(depth * 4) + node.element());
+        System.out.println(String.join("", Collections.nCopies(depth * 4, " ")) + node.element());
         // Exibir o lado esquerdo
         displayRecursive(node.getLeftChild(), depth + 1);
     }

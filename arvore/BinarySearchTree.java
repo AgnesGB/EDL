@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class BinarySearchTree {
     private No root;
@@ -120,4 +122,31 @@ public class BinarySearchTree {
         return root;
 
     }
+
+    public void setRoot(No root){
+
+        this.root = root;
+
+    }
+
+    public void mirror() {
+        root = mirrorRecursive(root);
+    }
+    
+    // Método auxiliar recursivo para espelhar a árvore
+    private No mirrorRecursive(No node) {
+        if (node == null) {
+            return null;
+        }
+    
+        // Inverte os filhos esquerdo e direito
+        No left = mirrorRecursive(node.getLeftChild());
+        No right = mirrorRecursive(node.getRightChild());
+        
+        node.setLeftChild(right);
+        node.setRightChild(left);
+    
+        return node;
+    }
+
 }

@@ -70,5 +70,15 @@ public class pilhaArray implements IPilha{
       this.push(p.a[i]);
     }
   }
+
+  public void empty(){
+
+    while (isEmpty() == false){
+
+      t = t- 1;
+
+    }
+
+  }
   
 }

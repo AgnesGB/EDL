@@ -114,17 +114,17 @@ public class ArvoreSimples {
 
     /** Retorna a altura da árvore */
     public int height() {
-        return height(raiz);
+        return heightRec(raiz);
     }
 
-    private int height(No v) {
+    private int heightRec(No v) {
         if (isExternal(v)) {
             return 0;
         }
         int maxHeight = 0;
         Iterator<No> children = v.children();
         while (children.hasNext()) {
-            maxHeight = Math.max(maxHeight, height(children.next()));
+            maxHeight = Math.max(maxHeight, heightRec(children.next()));
         }
         return 1 + maxHeight;
     }

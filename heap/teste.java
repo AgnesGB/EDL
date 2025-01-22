@@ -10,6 +10,12 @@ public class teste {
         pp.insert(8);
         pp.insert(54);
         pp.exibir();
+        System.out.println("============================");
+        System.out.println("min:");
+        System.out.println(pp.min());
+        System.out.println("size");
+        System.out.println(pp.size());
+        System.out.println("============================");
         System.out.println("min:");
         System.out.println(pp.min());
         System.out.println("removido:");
@@ -17,6 +23,7 @@ public class teste {
         System.out.println("size");
         System.out.println(pp.size());
         pp.exibir();
+        System.out.println("============================");
         System.out.println("min:");
         System.out.println(pp.min());
         System.out.println("removido:");
@@ -24,6 +31,7 @@ public class teste {
         System.out.println("size");
         System.out.println(pp.size());
         pp.exibir();
+        System.out.println("============================");
         System.out.println("min:");
         System.out.println(pp.min());
         System.out.println("removido:");
@@ -31,6 +39,7 @@ public class teste {
         System.out.println("size");
         System.out.println(pp.size());
         pp.exibir();
+        System.out.println("============================");
         System.out.println("min:");
         System.out.println(pp.min());
         System.out.println("removido:");
@@ -38,5 +47,6 @@ public class teste {
         System.out.println("size");
         System.out.println(pp.size());
         pp.exibir();
+        System.out.println("============================");
     }
 }

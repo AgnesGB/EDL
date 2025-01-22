@@ -55,7 +55,6 @@ public class arrayheap {
     }
 
     public void insert(int o){
-        int temp = 0;
         int posi = size + 1;
         a[posi] = o;
         size++;

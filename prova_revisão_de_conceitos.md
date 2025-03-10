@@ -94,6 +94,29 @@ class MaxHeap {
 }
 ```
 
+### **Operações em Heaps**
+1. **Inserção (Insert)**
+   - Adiciona um novo elemento no último nó disponível.
+   - **Upheap:** Caso a propriedade heap-order seja violada, o elemento é "subido" até encontrar sua posição correta. Complexidade: \( O(\log n) \).
+
+2. **Remoção do Mínimo (RemoveMin)**
+   - A raiz do heap (menor valor em um min-heap) é removida e substituída pelo último nó.
+   - **Downheap:** Caso a heap-order seja violada, o nó é "descido" até encontrar sua posição correta. Complexidade: \( O(\log n) \).
+
+3. **Heap-Sort**
+   - Ordenação usando um heap baseado em **fila de prioridade**.
+   - Complexidade: \( O(n \log n) \).
+   - Muito mais eficiente do que algoritmos quadráticos como **insertion sort** e **selection sort**.
+
+### **Implementação com Vetor**
+- Um heap pode ser armazenado em um vetor:
+  - Pai no índice \( i \).
+  - Filho esquerdo em \( 2i \).
+  - Filho direito em \( 2i + 1 \).
+
+### **Fusão de Heaps**
+- Para juntar dois heaps, cria-se um novo heap com uma raiz e as duas subárvores.
+- Aplica-se **downheap** para restaurar a heap-order.
 ---
 
 ## **2. Hash Table (Tabela Hash)**
@@ -186,11 +209,55 @@ class HashTable {
 }
 ```
 
+### **TAD Dicionário**
+- Modela uma coleção de itens **chave-elemento**.
+- Suporta operações básicas como:
+  - **findElement(k)** → Retorna o elemento associado à chave \( k \).
+  - **insertItem(k, o)** → Insere um novo item no dicionário.
+  - **removeElement(k)** → Remove um item pela chave \( k \).
+- Aplicações: **Agendas, autorização de cartões de crédito, mapeamento de hosts para IPs**.
+
+### **Implementações de Dicionário**
+1. **Arquivo de LOG (Sequência Não Ordenada)**
+   - Armazena os itens em uma ordem arbitrária.
+   - **Vantagens:** Inserção em \( O(1) \).
+   - **Desvantagens:** Busca e remoção em \( O(n) \).
+
+2. **Busca Binária (Array Ordenado)**
+   - Usada em tabelas de pesquisa ordenadas.
+   - **Vantagens:** Busca em \( O(\log n) \).
+   - **Desvantagens:** Inserção e remoção em \( O(n) \) (pois é necessário deslocar elementos).
+
+### **Tabelas de Dispersão (Hash Tables)**
+- Utilizam uma **função de dispersão (hash function)** para mapear chaves em índices de um vetor de tamanho fixo \( N \).
+- **Colisões** (quando duas chaves têm o mesmo índice) são resolvidas por:
+  - **Encadeamento**: Itens que colidem são armazenados em listas vinculadas.
+  - **Endereçamento aberto**: Busca-se outro local na tabela.
+
+### **Funções de Dispersão (Hash Functions)**
+- **Fórmulas comuns:**
+  - \( h(x) = x \mod N \) (para chaves inteiras).
+  - **Acumulação Polinomial** para strings: \( p(z) = a_0 + a_1 z + a_2 z^2 + \dots + a_{n-1}z^{n-1} \).
+
+### **Técnicas de Resolução de Colisões**
+1. **Linear Probing**: Procura o próximo espaço disponível sequencialmente.
+2. **Hashing Duplo**: Usa uma segunda função de dispersão \( d(k) \) para definir o deslocamento.
+
+### **Desempenho**
+- No **pior caso**, as operações podem rodar em \( O(n) \).
+- **Caso médio**: Tempo esperado \( O(1) \) para busca, inserção e remoção, se a dispersão for eficiente.
+
+### **Aplicações de Hash Tables**
+- **Pequenos bancos de dados, compiladores, caches de navegadores**.
+
 ---
 
 ## **3. Skip List**
 ### **O que é?**
-Uma **Skip List** é uma estrutura baseada em **listas encadeadas ordenadas**, mas com atalhos para acelerar as operações de busca.
+- Uma **Skip List** é uma estrutura de dados baseada em múltiplas listas ligadas ordenadas em **níveis**.
+- Cada nível é uma **subsequência** do nível anterior, contendo apenas alguns elementos selecionados aleatoriamente.
+- A estrutura contém **chaves especiais**: \( -\infty \) e \( +\infty \), representando o início e o fim.
+- Utilizada para **implementar dicionários** de forma eficiente.
 
 ### **Regras da Skip List**
 - Cada nó pode ter **vários níveis** de altura.
@@ -280,6 +347,43 @@ class SkipList {
     }
 }
 ```
+
+### **Operações em Skip Lists**
+1. **Busca (\( O(\log n) \))**
+   - Inicia no topo e segue para frente até encontrar um valor maior.
+   - Se o valor desejado for maior, desce para o próximo nível.
+   - Repete até encontrar o elemento ou determinar que ele não existe.
+
+2. **Inserção (\( O(\log n) \))**
+   - Determina aleatoriamente quantos níveis o novo elemento terá.
+   - Insere o elemento nos níveis correspondentes.
+   - Se necessário, adiciona um novo nível ao Skip List.
+
+3. **Remoção (\( O(\log n) \))**
+   - Encontra o elemento em todos os níveis e o remove.
+   - Se um nível ficar vazio, ele é descartado.
+
+---
+
+### **Implementação**
+- Cada nó da Skip List (chamado **quad-node**) contém:
+  - Um **item**.
+  - **Links** para o nó anterior e posterior (horizontalmente).
+  - **Links** para o nó acima e abaixo (verticalmente).
+
+---
+
+### **Análise de Complexidade**
+- **Espaço utilizado**: \( O(n) \)
+- **Altura da estrutura**: \( O(\log n) \) com alta probabilidade.
+- **Tempo esperado para busca, inserção e remoção**: \( O(\log n) \).
+
+---
+
+### **Conclusão**
+- **Skip Lists** são uma alternativa eficiente a **árvores balanceadas** para implementar dicionários.
+- São **fáceis de implementar** e oferecem um bom desempenho esperado.
+- O uso de um **algoritmo randômico** garante boa distribuição dos elementos nos níveis.
 
 ---
 

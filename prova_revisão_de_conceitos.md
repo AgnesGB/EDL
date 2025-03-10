@@ -19,6 +19,81 @@ O **Heapsort** é um algoritmo de ordenação baseado na estrutura de dados cham
 - **Não é estável** (elementos iguais podem trocar de posição).
 - **É um algoritmo em-place** (não usa memória extra significativa).
 
+### **Código Java**
+```java
+import java.util.Arrays;
+
+class MaxHeap {
+    private int[] heap;
+    private int size;
+    
+    public MaxHeap(int capacity) {
+        heap = new int[capacity + 1]; // Índice começa em 1
+        size = 0;
+    }
+
+    private void swap(int a, int b) {
+        int temp = heap[a];
+        heap[a] = heap[b];
+        heap[b] = temp;
+    }
+
+    private void upHeap(int i) {
+        while (i > 1 && heap[i] > heap[i / 2]) {
+            swap(i, i / 2);
+            i = i / 2;
+        }
+    }
+
+    public void insert(int value) {
+        if (size + 1 >= heap.length) throw new RuntimeException("Heap cheio");
+        heap[++size] = value;
+        upHeap(size);
+    }
+
+    private void downHeap(int i) {
+        while (2 * i <= size) {
+            int j = 2 * i;
+            if (j < size && heap[j] < heap[j + 1]) j++; 
+            if (heap[i] >= heap[j]) break;
+            swap(i, j);
+            i = j;
+        }
+    }
+
+    public int removeMax() {
+        if (size == 0) throw new RuntimeException("Heap vazio");
+        int max = heap[1];
+        heap[1] = heap[size--];
+        downHeap(1);
+        return max;
+    }
+
+    public void heapify(int[] array) {
+        heap = new int[array.length + 1];
+        size = array.length;
+        System.arraycopy(array, 0, heap, 1, array.length);
+        for (int i = size / 2; i >= 1; i--) {
+            downHeap(i);
+        }
+    }
+
+    public static MaxHeap mergeHeaps(MaxHeap h1, MaxHeap h2) {
+        int[] mergedArray = new int[h1.size + h2.size];
+        System.arraycopy(h1.heap, 1, mergedArray, 0, h1.size);
+        System.arraycopy(h2.heap, 1, mergedArray, h1.size, h2.size);
+
+        MaxHeap mergedHeap = new MaxHeap(mergedArray.length);
+        mergedHeap.heapify(mergedArray);
+        return mergedHeap;
+    }
+
+    public void printHeap() {
+        System.out.println(Arrays.toString(Arrays.copyOfRange(heap, 1, size + 1)));
+    }
+}
+```
+
 ---
 
 ## **2. Hash Table (Tabela Hash)**
@@ -40,7 +115,76 @@ Uma **Hash Table** é uma estrutura que **mapeia chaves para valores** usando um
 
 ### **Complexidade**
 - **Busca média: O(1)** (tempo constante, se não houver muitas colisões).
-- **Pior caso: O(n)** (se todas as chaves caírem na mesma posição).
+- **Pior caso: O(n)** (se todas as chaves caírem na mesma posição).  
+
+### **TAD Dicionário**
+```java
+import java.util.Arrays;
+
+class HashTable {
+    private static final int NO_SUCH_KEY = -1;
+    private static final int EMPTY = -99999;
+    private int[] keys;
+    private int[] values;
+    private int capacity;
+    private int size;
+
+    public HashTable(int capacity) {
+        this.capacity = capacity;
+        this.size = 0;
+        this.keys = new int[capacity];
+        this.values = new int[capacity];
+        Arrays.fill(keys, EMPTY);
+    }
+
+    private int hashFunction(int key) {
+        return (key * 31) % capacity; // h1: chave → inteiro
+    }
+
+    private int compressionFunction(int hash) {
+        return Math.abs(hash) % capacity; // h2: inteiro → índice
+    }
+
+    private int findIndex(int key) {
+        int index = compressionFunction(hashFunction(key));
+        while (keys[index] != EMPTY && keys[index] != key) {
+            index = (index + 1) % capacity; // Linear Probing
+        }
+        return index;
+    }
+
+    public void insertItem(int key, int value) {
+        int index = findIndex(key);
+        if (keys[index] == EMPTY) size++;
+        keys[index] = key;
+        values[index] = value;
+    }
+
+    public int findElement(int key) {
+        int index = findIndex(key);
+        return keys[index] == key ? values[index] : NO_SUCH_KEY;
+    }
+
+    public int removeElement(int key) {
+        int index = findIndex(key);
+        if (keys[index] == key) {
+            int value = values[index];
+            keys[index] = EMPTY;
+            size--;
+            return value;
+        }
+        return NO_SUCH_KEY;
+    }
+
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    public int size() {
+        return size;
+    }
+}
+```
 
 ---
 
@@ -66,6 +210,76 @@ Uma **Skip List** é uma estrutura baseada em **listas encadeadas ordenadas**, m
 ### **Por que usar Skip List?**
 - Simples de implementar, diferente de árvores balanceadas.
 - Boa para buscas rápidas sem precisar de balanceamento complexo.
+
+### **Código Java**
+```java
+import java.util.Random;
+
+class SkipListNode {
+    int key;
+    int value;
+    SkipListNode[] next;
+
+    public SkipListNode(int key, int value, int level) {
+        this.key = key;
+        this.value = value;
+        this.next = new SkipListNode[level + 1];
+    }
+}
+
+class SkipList {
+    private static final int MAX_LEVEL = 4;
+    private final SkipListNode head;
+    private int level;
+    private final Random rand;
+
+    public SkipList() {
+        this.head = new SkipListNode(-1, -1, MAX_LEVEL);
+        this.level = 0;
+        this.rand = new Random();
+    }
+
+    private int randomLevel() {
+        int lvl = 0;
+        while (lvl < MAX_LEVEL && rand.nextDouble() < 0.5) lvl++;
+        return lvl;
+    }
+
+    public void insert(int key, int value) {
+        SkipListNode[] update = new SkipListNode[MAX_LEVEL + 1];
+        SkipListNode current = head;
+
+        for (int i = level; i >= 0; i--) {
+            while (current.next[i] != null && current.next[i].key < key) {
+                current = current.next[i];
+            }
+            update[i] = current;
+        }
+
+        int newLevel = randomLevel();
+        if (newLevel > level) {
+            level = newLevel;
+        }
+
+        SkipListNode newNode = new SkipListNode(key, value, newLevel);
+        for (int i = 0; i <= newLevel; i++) {
+            newNode.next[i] = update[i].next[i];
+            update[i].next[i] = newNode;
+        }
+    }
+
+    public Integer search(int key) {
+        SkipListNode current = head;
+        for (int i = level; i >= 0; i--) {
+            while (current.next[i] != null && current.next[i].key < key) {
+                current = current.next[i];
+            }
+        }
+        current = current.next[0];
+        return (current != null && current.key == key) ? current.value : null;
+    }
+}
+```
 
 ---
 

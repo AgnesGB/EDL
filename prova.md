@@ -101,19 +101,40 @@ Se houver colisão, procuramos a próxima posição disponível.
 2. `9` → Índice `2` ocupado → Vai para `3`
 3. `13` → Índice `6`
 4. `7` → Índice `0`
-5. `24` → Índice `3` ocupado → Vai para `4`
-6. `55` → Índice `6` ocupado → Vai para `0` (ocupado) → Vai para `1`
-7. `37` → Índice `2` ocupado → Vai para `3` (ocupado) → Vai para `4` (ocupado) → Vai para `5`
 
-#### **Tabela final após inserção:**
+Ocupou metade. rehash. proximo primo após o dobro do mod. 7*2=14. prox=17.
+
+### Inserir os valores na nova tabela de tamanho 17
+Agora, vamos inserir os valores na tabela com 17 posições, seguindo a lógica de resolução de colisões (endereçamento aberto com teste linear).
+
+1. **51** → Índice 0
+2. **9** → Índice 9
+3. **13** → Índice 13
+4. **7** → Índice 7
+5. **24** → Índice 7 ocupado → Vai para 8
+6. **55** → Índice 4
+7. **37** → Índice 3
+
+### Passo 4: Tabela final após o rehash:
+
 | Índice | Valor |
 |--------|-------|
-| 0      | 7     |
-| 1      | 55    |
-| 2      | 51    |
-| 3      | 9     |
-| 4      | 24    |
-| 5      | 37    |
-| 6      | 13    |
+| 0      | 51    |
+| 1      |       |
+| 2      |       |
+| 3      | 37    |
+| 4      | 55    |
+| 5      |       |
+| 6      |       |
+| 7      | 7     |
+| 8      | 24    |
+| 9      | 9     |
+| 10     |       |
+| 11     |       |
+| 12     |       |
+| 13     | 13    |
+| 14     |       |
+| 15     |       |
+| 16     |       |
 
-Se a ocupação passasse de **50% (3,5 elementos)**, precisaríamos **fazer rehash**, aumentando a tabela.
+Agora, a tabela foi reorganizada após o rehash, com tamanho 17, e todos os valores foram realocados corretamente com base na nova função de hash.

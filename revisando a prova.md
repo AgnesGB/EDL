@@ -72,8 +72,8 @@ public void espelho(No no){
     espelho(no.direito);
 
     No temp = no.esquerdo;
-    no.direito = no.esquerdo;
-    no.esquerdo = temp;
+    no.esquerdo = no.direito;
+    no.direito = temp;
 }
 ```
 

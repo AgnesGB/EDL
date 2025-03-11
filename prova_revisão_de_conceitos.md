@@ -285,65 +285,150 @@ import java.util.Random;
 class SkipListNode {
     int key;
     int value;
-    SkipListNode[] next;
+    SkipListNode[] next;  // Ponteiros para os nós à direita em diferentes níveis
+    SkipListNode[] prev;  // Ponteiros para os nós à esquerda em diferentes níveis
+    SkipListNode[] up;    // Ponteiros para o nível superior
+    SkipListNode[] down;  // Ponteiros para o nível inferior
 
+    // Construtor para criar um novo nó com um dado número de níveis
     public SkipListNode(int key, int value, int level) {
         this.key = key;
         this.value = value;
-        this.next = new SkipListNode[level + 1];
+        this.next = new SkipListNode[level + 1];  // Ponteiros para o próximo nó em cada nível
+        this.prev = new SkipListNode[level + 1];  // Ponteiros para o nó anterior em cada nível
+        this.up = new SkipListNode[level + 1];    // Ponteiros para o nível superior
+        this.down = new SkipListNode[level + 1];  // Ponteiros para o nível inferior
     }
 }
 
 class SkipList {
-    private static final int MAX_LEVEL = 4;
-    private final SkipListNode head;
-    private int level;
-    private final Random rand;
+    private static final double P = 0.5;  // Probabilidade de aumentar o nível de um nó
+    private SkipListNode head;  // Cabeça (sentinela inferior negativa)
+    private SkipListNode tail;  // Cauda (sentinela superior positiva)
+    private int level;  // Nível máximo atual da lista
+    private Random rand;  // Gerador de números aleatórios
 
+    // Construtor da SkipList
     public SkipList() {
-        this.head = new SkipListNode(-1, -1, MAX_LEVEL);
+        rand = new Random();
         this.level = 0;
-        this.rand = new Random();
+        this.head = new SkipListNode(Integer.MIN_VALUE, Integer.MIN_VALUE, level); // Sentinela negativa
+        this.tail = new SkipListNode(Integer.MAX_VALUE, Integer.MAX_VALUE, level);  // Sentinela positiva
+
+        // Conectar cabeça e cauda
+        for (int i = 0; i <= level; i++) {
+            head.next[i] = tail;  // Cabeça aponta para a cauda
+            tail.prev[i] = head;  // Cauda aponta para a cabeça
+        }
     }
 
+    // Função que retorna o número de níveis aleatórios para o novo nó
     private int randomLevel() {
         int lvl = 0;
-        while (lvl < MAX_LEVEL && rand.nextDouble() < 0.5) lvl++;
+        while (rand.nextDouble() < P) { // Aumenta o nível com uma probabilidade P
+            lvl++;
+        }
         return lvl;
     }
 
+    // Inserção de um novo nó na Skip List
     public void insert(int key, int value) {
-        SkipListNode[] update = new SkipListNode[MAX_LEVEL + 1];
+        SkipListNode[] update = new SkipListNode[level + 1];
         SkipListNode current = head;
 
+        // Atualizando os ponteiros para os nós a serem atualizados em cada nível
         for (int i = level; i >= 0; i--) {
             while (current.next[i] != null && current.next[i].key < key) {
                 current = current.next[i];
             }
-            update[i] = current;
+            update[i] = current;  // Armazena o último nó visitado no nível i
         }
 
+        // Gera um novo nível aleatório para o nó a ser inserido
         int newLevel = randomLevel();
         if (newLevel > level) {
-            level = newLevel;
+            level = newLevel; // Atualiza o nível máximo se necessário
         }
 
+        // Cria o novo nó com o nível aleatório
         SkipListNode newNode = new SkipListNode(key, value, newLevel);
+
+        // Atualiza os ponteiros do novo nó e os ponteiros dos nós anteriores
         for (int i = 0; i <= newLevel; i++) {
-            newNode.next[i] = update[i].next[i];
-            update[i].next[i] = newNode;
+            newNode.next[i] = update[i].next[i];  // Conectando o próximo nó
+            update[i].next[i] = newNode;          // Atualizando o ponteiro do nó anterior
+
+            // Conectando os ponteiros prev
+            if (newNode.next[i] != null) {
+                newNode.next[i].prev[i] = newNode;
+            }
+
+            newNode.prev[i] = update[i];  // Atualiza o ponteiro anterior
+        }
+
+        // Configurando os ponteiros up e down
+        if (newLevel > 0) {
+            for (int i = 1; i <= newLevel; i++) {
+                newNode.down[i] = update[i].down[i]; // Abaixo
+                if (newNode.down[i] != null) {
+                    newNode.down[i].up[i] = newNode; // Acima
+                }
+                update[i].down[i] = newNode; // O ponteiro para baixo
+            }
         }
     }
 
+    // Busca de um valor na Skip List com base na chave
     public Integer search(int key) {
         SkipListNode current = head;
         for (int i = level; i >= 0; i--) {
             while (current.next[i] != null && current.next[i].key < key) {
-                current = current.next[i];
+                current = current.next[i]; // Avançando para o próximo nó
             }
         }
-        current = current.next[0];
-        return (current != null && current.key == key) ? current.value : null;
+
+        current = current.next[0]; // Acessando o nível 0
+        return (current != null && current.key == key) ? current.value : null; // Retorna o valor ou null se não encontrado
+    }
+
+    // Remoção de um nó com a chave fornecida
+    public void delete(int key) {
+        SkipListNode[] update = new SkipListNode[level + 1];
+        SkipListNode current = head;
+
+        // Encontrar os nós que precisam ser atualizados em cada nível
+        for (int i = level; i >= 0; i--) {
+            while (current.next[i] != null && current.next[i].key < key) {
+                current = current.next[i];
+            }
+            update[i] = current; // Armazena o último nó visitado em cada nível
+        }
+
+        current = current.next[0]; // Acessando o nível 0
+        if (current != null && current.key == key) { // Se o nó existe
+            // Atualizando os ponteiros nos níveis acima para "remover" o nó
+            for (int i = 0; i <= level; i++) {
+                if (update[i].next[i] != current) break;
+                update[i].next[i] = current.next[i]; // Desconecta o nó
+                if (current.next[i] != null) {
+                    current.next[i].prev[i] = update[i]; // Atualiza o ponteiro anterior
+                }
+            }
+
+            // Atualiza os ponteiros up e down
+            if (current.down[0] != null) {
+                for (int i = 0; i < current.down.length; i++) {
+                    if (current.down[i] != null) {
+                        current.down[i].up[i] = current.up[i];
+                    }
+                }
+            }
+
+            // Se o nível máximo for igual ao último nível da lista, reduz o nível
+            while (level > 0 && head.next[level] == null) {
+                level--;
+            }
+        }
     }
 }
 ```

@@ -144,67 +144,92 @@ Uma **Hash Table** é uma estrutura que **mapeia chaves para valores** usando um
 ```java
 import java.util.Arrays;
 
-class HashTable {
-    private static final int NO_SUCH_KEY = -1;
-    private static final int EMPTY = -99999;
-    private int[] keys;
-    private int[] values;
-    private int capacity;
+public class HashTable {
+    private Integer[] keys;
+    private String[] values;
     private int size;
 
     public HashTable(int capacity) {
-        this.capacity = capacity;
-        this.size = 0;
-        this.keys = new int[capacity];
-        this.values = new int[capacity];
-        Arrays.fill(keys, EMPTY);
+        keys = new Integer[capacity];
+        values = new String[capacity];
+        size = 0;
     }
 
-    private int hashFunction(int key) {
-        return (key * 31) % capacity; // h1: chave → inteiro
+    private int hash(int key) {
+        return key % keys.length;
     }
 
-    private int compressionFunction(int hash) {
-        return Math.abs(hash) % capacity; // h2: inteiro → índice
-    }
-
-    private int findIndex(int key) {
-        int index = compressionFunction(hashFunction(key));
-        while (keys[index] != EMPTY && keys[index] != key) {
-            index = (index + 1) % capacity; // Linear Probing
+    private boolean isPrime(int num) {
+        if (num < 2) return false;
+        for (int i = 2; i * i <= num; i++) {
+            if (num % i == 0) return false;
         }
-        return index;
+        return true;
     }
 
-    public void insertItem(int key, int value) {
-        int index = findIndex(key);
-        if (keys[index] == EMPTY) size++;
+    private int nextPrime(int num) {
+        while (!isPrime(num)) {
+            num++;
+        }
+        return num;
+    }
+
+    public void insert(int key, String value) {
+        if (size >= keys.length / 2) { // Rehash quando atingir 50%
+            rehash();
+        }
+
+        int index = hash(key);
+        while (keys[index] != null) {
+            if (keys[index].equals(key)) { // Atualiza se a chave já existir
+                values[index] = value;
+                return;
+            }
+            index = (index + 1) % keys.length; // Linear Probing
+        }
         keys[index] = key;
         values[index] = value;
+        size++;
     }
 
-    public int findElement(int key) {
-        int index = findIndex(key);
-        return keys[index] == key ? values[index] : NO_SUCH_KEY;
-    }
+    private void rehash() {
+        int newCapacity = nextPrime(keys.length * 2);
+        Integer[] oldKeys = keys;
+        String[] oldValues = values;
 
-    public int removeElement(int key) {
-        int index = findIndex(key);
-        if (keys[index] == key) {
-            int value = values[index];
-            keys[index] = EMPTY;
-            size--;
-            return value;
+        keys = new Integer[newCapacity];
+        values = new String[newCapacity];
+        size = 0;
+
+        for (int i = 0; i < oldKeys.length; i++) {
+            if (oldKeys[i] != null) {
+                insert(oldKeys[i], oldValues[i]); // Reinsere na nova tabela
+            }
         }
-        return NO_SUCH_KEY;
+
+        System.out.println("Rehash realizado! Novo tamanho: " + newCapacity);
     }
 
-    public boolean isEmpty() {
-        return size == 0;
+    public String get(int key) {
+        int index = hash(key);
+        while (keys[index] != null) {
+            if (keys[index].equals(key)) {
+                return values[index];
+            }
+            index = (index + 1) % keys.length; // Continua busca linear
+        }
+        return null;
     }
 
-    public int size() {
-        return size;
+    public void printTable() {
+        System.out.println("Tabela Hash:");
+        for (int i = 0; i < keys.length; i++) {
+            if (keys[i] != null) {
+                System.out.println("[" + i + "] " + keys[i] + " -> " + values[i]);
+            } else {
+                System.out.println("[" + i + "] ---");
+            }
+        }
     }
 }
 ```

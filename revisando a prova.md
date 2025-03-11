@@ -38,7 +38,7 @@ public boolean isHeap(No raiz){
 2) Usando minHeap
 
 Entrada: 7, 8, 15, 3, 20, 2, 16, 6
-
+```
 primeiro insere.
 7 -> heap:[7];
 8 -> heap:[7, 8] (esquerdo)
@@ -60,7 +60,7 @@ remove o 16. 20 vai pra cima. [20].
 remove o 20. heap vazio.
 
 array: [2, 3, 6, 7, 8, 15, 16, 20]
-
+```
 3) espelho de arvore
 
 ```java

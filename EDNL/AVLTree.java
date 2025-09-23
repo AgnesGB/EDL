@@ -6,7 +6,6 @@ public class AVLTree<T extends Comparable<? super T>> {
 
     private AVLNode<T> root;
 
-    /* =================== API PÚBLICA =================== */
 
     public boolean isEmpty() { return root == null; }
 
@@ -61,8 +60,7 @@ public class AVLTree<T extends Comparable<? super T>> {
         } else if (cmp > 0) {
             node.right = insertRec(node.right, key, node);
         } else {
-            // chave repetida: opcionalmente ignore ou trate
-            return node; // ignorando duplicatas
+            return node; 
         }
 
         update(node);
@@ -151,22 +149,22 @@ public class AVLTree<T extends Comparable<? super T>> {
     private AVLNode<T> rebalance(AVLNode<T> z) {
         int balance = z.fatorBalanceamento;
 
-        // Casos clássicos de AVL
-        // Left-Left
+        // Casos de rotações!!
+        // Simples a esquerda
         if (balance > 1 && bf(z.left) >= 0) {
             return rotateRight(z);
         }
-        // Left-Right
+        // Dupla a direita
         if (balance > 1 && bf(z.left) < 0) {
             z.left = rotateLeft(z.left);
             if (z.left != null) z.left.pai = z;
             return rotateRight(z);
         }
-        // Right-Right
+        // Simples a Direita
         if (balance < -1 && bf(z.right) <= 0) {
             return rotateLeft(z);
         }
-        // Right-Left
+        // Dupla a esquerda
         if (balance < -1 && bf(z.right) > 0) {
             z.right = rotateRight(z.right);
             if (z.right != null) z.right.pai = z;
@@ -217,8 +215,6 @@ public class AVLTree<T extends Comparable<? super T>> {
         if (y.pai == null) root = y;
         return y;
     }
-
-    /* =================== DEBUG/HELPERS =================== */
 
     // Imprime a árvore em várias linhas (para debug rápido)
     public void printTree() {

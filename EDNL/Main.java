@@ -5,16 +5,18 @@ public class Main {
         System.out.println("Árvore inicial (antes das inserções):");
         avl.printTree();
 
-        int[] nums = { 30, 20, 40, 10, 25, 35, 50, 5, 27, 45, 60, 55 };
+        int[] nums = { 22,5,10,2,8,15 };
         for (int n : nums) avl.insert(n);
 
         System.out.println("\nÁrvore após inserções:");
         avl.printTree();
 
-        avl.remove(40);
-        avl.remove(50);
+        avl.insert(25);
+        System.out.println("\nÁrvore após insersecao do 25 ");
+        avl.printTree();
+        avl.remove(5);
 
-        System.out.println("\nÁrvore após remoções (40 e 50):");
+        System.out.println("\nÁrvore após remoções 5 ");
         avl.printTree();
     }
 }

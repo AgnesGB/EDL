@@ -18,5 +18,13 @@ public class Main {
 
         System.out.println("\nÁrvore após remoções 5 ");
         avl.printTree();
+        avl.remove(22);
+
+        System.out.println("\nÁrvore após remoções 22 ");
+        avl.printTree();
+        avl.remove(10);
+
+        System.out.println("\nÁrvore após remoções 10 ");
+        avl.printTree();
     }
 }

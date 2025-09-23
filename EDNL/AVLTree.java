@@ -78,7 +78,7 @@ public class AVLTree<T extends Comparable<? super T>> {
             node.right = removeRec(node.right, key);
             if (node.right != null) node.right.pai = node;
         } else {
-            // achou o nó a remover
+            // achei o nó a remover
             if (node.left == null || node.right == null) {
                 AVLNode<T> temp = (node.left != null) ? node.left : node.right;
 
@@ -216,7 +216,8 @@ public class AVLTree<T extends Comparable<? super T>> {
         return y;
     }
 
-    // Imprime a árvore em várias linhas (para debug rápido)
+
+
     public void printTree() {
     if (root == null) {
         System.out.println("(árvore vazia)");

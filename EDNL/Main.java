@@ -26,5 +26,16 @@ public class Main {
 
         System.out.println("\nÁrvore após remoções 10 ");
         avl.printTree();
+        avl.insert(26);
+        avl.insert(27);
+        avl.insert(28);
+        avl.insert(29);
+        avl.insert(30);
+        avl.printTree();
+        avl.remove(15);
+        avl.printTree();
+        avl.insert(56);
+        avl.printTree();
+
     }
 }

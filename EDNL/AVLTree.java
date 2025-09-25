@@ -1,198 +1,122 @@
-// AVLTree.java
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class AVLTree<T extends Comparable<? super T>> {
 
     private AVLNode<T> root;
 
+    private AVLNode<T> ultimoPai; 
 
     public boolean isEmpty() { return root == null; }
 
-    public void insert(T key) {
-        root = insertRec(root, key, null);
-    }
+    private AVLNode<T> buscar(T key) {
+        AVLNode<T> curr = root;
+        ultimoPai = null;
 
-    public void remove(T key) {
-        root = removeRec(root, key);
+        while (curr != null) {
+            int cmp = key.compareTo(curr.key);
+            if (cmp == 0) {
+                return curr; // achou
+            }
+            ultimoPai = curr; // guarda o pai antes de descer
+            curr = (cmp < 0) ? curr.left : curr.right;
+        }
+
+        return null;
     }
 
     public boolean contains(T key) {
-        AVLNode<T> n = root;
-        while (n != null) {
-            int cmp = key.compareTo(n.key);
-            if (cmp == 0) return true;
-            n = (cmp < 0) ? n.left : n.right;
-        }
-        return false;
+        return buscar(key) != null;
     }
 
-    public List<T> inorder() {
-        List<T> out = new ArrayList<>();
-        inorderRec(root, out);
-        return out;
-    }
+    public void insert(T key) {
+        if (root == null) { root = novoNo(key, null); return; }
 
-    public List<T> preorder() {
-        List<T> out = new ArrayList<>();
-        preorderRec(root, out);
-        return out;
-    }
+        AVLNode<T> achado = buscar(key);
+        if (achado != null) return; // já existe → ignora duplicata
 
-    public List<T> postorder() {
-        List<T> out = new ArrayList<>();
-        postorderRec(root, out);
-        return out;
-    }
-
-    /* =================== RECURSIVOS =================== */
-
-    private AVLNode<T> insertRec(AVLNode<T> node, T key, AVLNode<T> parent) {
-        if (node == null) {
-            AVLNode<T> novo = new AVLNode<>(key);
-            novo.pai = parent;
-            return novo;
-        }
-
-        int cmp = key.compareTo(node.key);
-        if (cmp < 0) {
-            node.left = insertRec(node.left, key, node);
-        } else if (cmp > 0) {
-            node.right = insertRec(node.right, key, node);
+        // se não achou, ultimoPai aponta pro nó onde deve ser inserido
+        AVLNode<T> novo = novoNo(key, ultimoPai);
+        if (key.compareTo(ultimoPai.key) < 0) {
+            ultimoPai.left = novo;
         } else {
-            return node; 
+            ultimoPai.right = novo;
         }
 
-        update(node);
-        return rebalance(node);
+        subirRebalanceando(ultimoPai);
     }
 
-    private AVLNode<T> removeRec(AVLNode<T> node, T key) {
-        if (node == null) return null;
+    public void remove(T key) {
+        if (root == null) return;
 
-        int cmp = key.compareTo(node.key);
-        if (cmp < 0) {
-            node.left = removeRec(node.left, key);
-            if (node.left != null) node.left.pai = node;
-        } else if (cmp > 0) {
-            node.right = removeRec(node.right, key);
-            if (node.right != null) node.right.pai = node;
+        AVLNode<T> curr = buscar(key);
+        if (curr == null) return; // chave não existe
+
+        // caso 2 filhos: substitui pelo sucessor
+        if (curr.left != null && curr.right != null) {
+            AVLNode<T> suc = curr.right;
+            while (suc.left != null) suc = suc.left;
+            curr.key = suc.key;
+            curr = suc; // remove o sucessor agora
+        }
+
+        AVLNode<T> child = (curr.left != null) ? curr.left : curr.right;
+        AVLNode<T> parent = curr.pai;
+
+        if (child != null) child.pai = parent;
+
+        if (parent == null) {
+            root = child; // removendo raiz
+        } else if (parent.left == curr) {
+            parent.left = child;
         } else {
-            // achei o nó a remover
-            if (node.left == null || node.right == null) {
-                AVLNode<T> temp = (node.left != null) ? node.left : node.right;
-
-                if (temp == null) {
-                    // sem filhos
-                    node = null;
-                } else {
-                    // 1 filho
-                    temp.pai = node.pai;
-                    node = temp;
-                }
-            } else {
-                // 2 filhos: usa sucessor
-                AVLNode<T> suc = minNode(node.right);
-                node.key = suc.key;
-                node.right = removeRec(node.right, suc.key);
-                if (node.right != null) node.right.pai = node;
-            }
+            parent.right = child;
         }
 
-        if (node == null) return null;
-
-        update(node);
-        return rebalance(node);
+        subirRebalanceando(parent);
     }
 
-    /* =================== UTILITÁRIOS =================== */
+    /* =================== SUPORTE (altura, BF, update) =================== */
 
-    private void inorderRec(AVLNode<T> n, List<T> out) {
-        if (n == null) return;
-        inorderRec(n.left, out);
-        out.add(n.key);
-        inorderRec(n.right, out);
-    }
+    private int h(AVLNode<T> n) { return (n == null) ? 0 : n.height; }
 
-    private void preorderRec(AVLNode<T> n, List<T> out) {
-        if (n == null) return;
-        out.add(n.key);
-        preorderRec(n.left, out);
-        preorderRec(n.right, out);
-    }
-
-    private void postorderRec(AVLNode<T> n, List<T> out) {
-        if (n == null) return;
-        postorderRec(n.left, out);
-        postorderRec(n.right, out);
-        out.add(n.key);
-    }
-
-    private AVLNode<T> minNode(AVLNode<T> n) {
-        while (n.left != null) n = n.left;
-        return n;
-    }
-
-    private int h(AVLNode<T> n) {
-        return (n == null) ? 0 : n.height;
-    }
-
-    private int bf(AVLNode<T> n) {
-        return (n == null) ? 0 : h(n.left) - h(n.right);
-    }
+    private int bf(AVLNode<T> n) { return (n == null) ? 0 : h(n.left) - h(n.right); }
 
     private void update(AVLNode<T> n) {
         n.height = Math.max(h(n.left), h(n.right)) + 1;
         n.fatorBalanceamento = bf(n);
     }
 
-    private AVLNode<T> rebalance(AVLNode<T> z) {
-        int balance = z.fatorBalanceamento;
-
-        // Casos de rotações!!
-        // Simples a esquerda
-        if (balance > 1 && bf(z.left) >= 0) {
-            return rotateRight(z);
-        }
-        // Dupla a direita
-        if (balance > 1 && bf(z.left) < 0) {
-            z.left = rotateLeft(z.left);
-            if (z.left != null) z.left.pai = z;
-            return rotateRight(z);
-        }
-        // Simples a Direita
-        if (balance < -1 && bf(z.right) <= 0) {
-            return rotateLeft(z);
-        }
-        // Dupla a esquerda
-        if (balance < -1 && bf(z.right) > 0) {
-            z.right = rotateRight(z.right);
-            if (z.right != null) z.right.pai = z;
-            return rotateLeft(z);
-        }
-
-        return z;
+    private AVLNode<T> novoNo(T key, AVLNode<T> pai) {
+        AVLNode<T> n = new AVLNode<>(key);
+        n.pai = pai;
+        // height e fatorBalanceamento já devem começar como 1 e 0 no construtor;
+        // mas garantimos aqui:
+        n.height = 1;
+        n.fatorBalanceamento = 0;
+        return n;
     }
-
-    /* =================== ROTAÇÕES =================== */
 
     private AVLNode<T> rotateRight(AVLNode<T> z) {
         AVLNode<T> y = z.left;
         AVLNode<T> T3 = (y != null) ? y.right : null;
 
-        // Rotação
+        // rotação
         y.right = z;
         y.pai = z.pai;
-        z.pai = y;
+
         z.left = T3;
         if (T3 != null) T3.pai = z;
 
-        // Atualiza alturas/BF
+        z.pai = y;
+
+        // reata no pai original
+        if (y.pai == null) root = y;
+        else if (y.pai.left == z) y.pai.left = y;
+        else y.pai.right = y;
+
+        // atualiza alturas/BF (filho antes do pai)
         update(z);
         update(y);
-
-        // Atualiza raiz se necessário
-        if (y.pai == null) root = y;
         return y;
     }
 
@@ -200,63 +124,104 @@ public class AVLTree<T extends Comparable<? super T>> {
         AVLNode<T> y = z.right;
         AVLNode<T> T2 = (y != null) ? y.left : null;
 
-        // Rotação
+        // rotação
         y.left = z;
         y.pai = z.pai;
-        z.pai = y;
+
         z.right = T2;
         if (T2 != null) T2.pai = z;
 
-        // Atualiza alturas/BF
+        z.pai = y;
+
+        // reata no pai original
+        if (y.pai == null) root = y;
+        else if (y.pai.left == z) y.pai.left = y;
+        else y.pai.right = y;
+
+        // atualiza alturas/BF (filho antes do pai)
         update(z);
         update(y);
-
-        // Atualiza raiz se necessário
-        if (y.pai == null) root = y;
         return y;
     }
 
+    /** Reequilibra um único nó z e retorna a nova raiz da subárvore (já ligada ao pai). */
+    private AVLNode<T> rebalance(AVLNode<T> z) {
+        update(z);
+        int balance = z.fatorBalanceamento;
+
+        if (balance > 1) { // pesado à esquerda
+            if (bf(z.left) < 0) rotateLeft(z.left); // caso LR
+            return rotateRight(z);                  // LL
+        }
+        if (balance < -1) { // pesado à direita
+            if (bf(z.right) > 0) rotateRight(z.right); // RL
+            return rotateLeft(z);                      // RR
+        }
+        return z;
+    }
+
+    /** Sobe do nó "start" até a raiz, atualizando e reequilibrando. */
+    private void subirRebalanceando(AVLNode<T> start) {
+        AVLNode<T> n = start;
+        while (n != null) {
+            AVLNode<T> paiAntigo = n.pai;
+            AVLNode<T> novoTopo = rebalance(n);
+            // se houve rotação, novoTopo pode não ser "n"; já está religado no pai dentro das rotações
+            n = paiAntigo;
+        }
+    }
 
 
     public void printTree() {
-    if (root == null) {
-        System.out.println("(árvore vazia)");
-        return;
-    }
-    int altura = root.height;
-    int largura = (int) Math.pow(2, altura) * 2; // define largura máxima
+        if (root == null) { 
+            System.out.println("(árvore vazia)"); 
+            return; 
+        }
 
-    java.util.Queue<AVLNode<T>> fila = new java.util.LinkedList<>();
-    fila.add(root);
+        int altura = root.height;
+        List<AVLNode<T>> nivel = new ArrayList<>();
+        nivel.add(root);
 
-    int nivel = 0;
-    while (!fila.isEmpty() && nivel < altura) {
-        int qtd = fila.size();
-        int espacos = (int) Math.pow(2, altura - nivel);
+        for (int depth = 1; depth <= altura; depth++) {
+            int gaps = (int) Math.pow(2, altura - depth) - 1;
+            int between = (int) Math.pow(2, altura - depth + 1) - 1;
 
-        // imprime nós do nível
-        for (int i = 0; i < qtd; i++) {
-            AVLNode<T> atual = fila.poll();
-            printEspacos(espacos);
-
-            if (atual != null) {
-                System.out.print(atual.key);
-                fila.add(atual.left);
-                fila.add(atual.right);
-            } else {
-                System.out.print(" ");
-                fila.add(null);
-                fila.add(null);
+            // ===== PRIMEIRA LINHA: chaves =====
+            printSpaces(gaps);
+            List<AVLNode<T>> prox = new ArrayList<>();
+            for (int i = 0; i < nivel.size(); i++) {
+                AVLNode<T> n = nivel.get(i);
+                if (n == null) {
+                    System.out.print("  "); // espaço vazio
+                    prox.add(null); prox.add(null);
+                } else {
+                    System.out.print(n.key);
+                    prox.add(n.left); prox.add(n.right);
+                }
+                if (i < nivel.size() - 1) printSpaces(between);
             }
+            System.out.println();
 
-            printEspacos(espacos);
+            // ===== SEGUNDA LINHA: fatores de balanceamento =====
+            printSpaces(gaps);
+            for (int i = 0; i < nivel.size(); i++) {
+                AVLNode<T> n = nivel.get(i);
+                if (n == null) {
+                    System.out.print("  ");
+                } else {
+                    System.out.print("(" + n.fatorBalanceamento + ")");
+                }
+                if (i < nivel.size() - 1) printSpaces(between);
+            }
+            System.out.println();
+
+            nivel = prox;
         }
         System.out.println();
-        nivel++;
     }
-}
 
-private void printEspacos(int qtd) {
-    for (int i = 0; i < qtd; i++) System.out.print(" ");
-}
+    private void printSpaces(int n) {
+        for (int i = 0; i < n; i++) System.out.print(" ");
+    }
+
 }

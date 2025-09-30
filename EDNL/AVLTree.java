@@ -24,10 +24,6 @@ public class AVLTree<T extends Comparable<? super T>> {
         return null;
     }
 
-    public boolean contains(T key) {
-        return buscar(key) != null;
-    }
-
     public void insert(T key) {
         if (root == null) { root = novoNo(key, null); return; }
 
@@ -90,7 +86,6 @@ public class AVLTree<T extends Comparable<? super T>> {
         AVLNode<T> n = new AVLNode<>(key);
         n.pai = pai;
         // height e fatorBalanceamento já devem começar como 1 e 0 no construtor;
-        // mas garantimos aqui:
         n.height = 1;
         n.fatorBalanceamento = 0;
         return n;

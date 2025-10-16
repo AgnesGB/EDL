@@ -10,12 +10,11 @@ public class RedBlackTree<T extends Comparable<? super T>> {
     public boolean contains(T key) { return getNode(key) != NIL; }
 
     public void insert(T key) {
-        // Inserção BST iterativa
         RBNode<T> y = NIL, x = root;
         while (x != NIL) {
             y = x;
             int cmp = key.compareTo(x.key);
-            if (cmp == 0) return;           // ignorar duplicatas
+            if (cmp == 0) return;          
             x = (cmp < 0) ? x.left : x.right;
         }
         RBNode<T> z = new RBNode<>(key, RBNode.Color.RED, NIL); // nó nasce RED
@@ -179,7 +178,7 @@ public class RedBlackTree<T extends Comparable<? super T>> {
                 }
             }
         }
-        root.color = RBNode.Color.BLACK; // raiz sempre preta
+        root.color = RBNode.Color.BLACK; // garantia de que raiz sempre preta
     }
 
     /* ===================== Fix-up da remoção (duplo-negro) ===================== */
@@ -271,7 +270,7 @@ public class RedBlackTree<T extends Comparable<? super T>> {
                 String s = (n == NIL) ? " " : String.valueOf(n.key);
                 System.out.print(s);
                 if (i < level.size() - 1) printSpaces(between);
-                // empurra filhos (ou NIL) para manter estrutura
+                // empurra filhos para manter estrutura
                 next.add((n == NIL) ? NIL : n.left);
                 next.add((n == NIL) ? NIL : n.right);
             }
@@ -281,7 +280,7 @@ public class RedBlackTree<T extends Comparable<? super T>> {
             printSpaces(between - 1);
             for (int i = 0; i < level.size(); i++) {
                 RBNode<T> n = level.get(i);
-                String s = (n == NIL) ? " " : "(" + (n.isRed() ? "R" : "B") + ")";
+                String s = (n == NIL) ? " " : "(" + (n.isRed() ? "R" : "N") + ")";
                 System.out.print(s);
                 if (i < level.size() - 1) printSpaces(between);
             }

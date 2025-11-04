@@ -34,7 +34,7 @@ public class RedBlackTree<T extends Comparable<? super T>> {
         if (z == NIL) return;
 
         RBNode<T> y = z;
-        RBNode.Color yOriginalColor = y.color;
+        RBNode.Color yOriginalColor = y.color; 
         RBNode<T> x;
 
         if (z.left == NIL) {

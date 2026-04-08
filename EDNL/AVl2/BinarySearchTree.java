@@ -1,40 +1,42 @@
 package EDNL.AVl2;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Collectors;
 
-public class BinarySearchTree {
-    private No root;
+public class BinarySearchTree<T extends Comparable<? super T>> {
+    protected No<T> root;
+    protected No<T> ultimoPai;
 
     // Construtor
     public BinarySearchTree() {
         this.root = null;
+        this.ultimoPai = null;
     }
 
-    public void insert(Integer key) {
+    protected No<T> createNode(T key, No<T> pai) {
+        return new No<>(pai, key);
+    }
+
+    public void insert(T key) {
         if (root == null) {
-            root = new No(null, key); // Cria a raiz se a árvore estiver vazia
+            root = createNode(key, null); // Cria a raiz se a árvore estiver vazia
         } else {
             insertRecursive(root, key);
         }
     }
     
-    private void insertRecursive(No current, Integer key) {
-        Integer currentValue = (Integer) current.element();
+    private void insertRecursive(No<T> current, T key) {
+        T currentValue = current.element();
     
-        if (key < currentValue) { // Inserir no lado esquerdo
+        if (key.compareTo(currentValue) < 0) { // Inserir no lado esquerdo
             if (current.getLeftChild() == null) {
-                No newNode = new No(current, key); // Cria um novo nó
+                No<T> newNode = createNode(key, current); // Cria um novo nó
                 current.setLeftChild(newNode); // Define como filho esquerdo
             } else {
                 insertRecursive(current.getLeftChild(), key); // Continua no lado esquerdo
             }
-        } else if (key > currentValue) { // Inserir no lado direito
+        } else if (key.compareTo(currentValue) > 0) { // Inserir no lado direito
             if (current.getRightChild() == null) {
-                No newNode = new No(current, key); // Cria um novo nó
+                No<T> newNode = createNode(key, current); // Cria um novo nó
                 current.setRightChild(newNode); // Define como filho direito
             } else {
                 insertRecursive(current.getRightChild(), key); // Continua no lado direito
@@ -44,46 +46,73 @@ public class BinarySearchTree {
 
 
     // Remover um valor da árvore
-    public void remove(Integer value) {
+    public void remove(T value) {
         root = removeRecursive(root, value);
+        if (root != null) {
+            root.setParent(null);
+        }
     }
 
-    private No removeRecursive(No current, Integer value) {
+    public void delete(T value) {
+        remove(value);
+    }
+
+    private No<T> removeRecursive(No<T> current, T value) {
         if (current == null) {
             return null;
         }
     
-        Integer currentValue = (Integer) current.element();
+        T currentValue = current.element();
     
-        if (value < currentValue) { // Procurar no lado esquerdo
-            No leftChild = current.getLeftChild();
-            current.setLeftChild(removeRecursive(leftChild, value));
-        } else if (value > currentValue) { // Procurar no lado direito
-            No rightChild = current.getRightChild();
-            current.setRightChild(removeRecursive(rightChild, value));
+        if (value.compareTo(currentValue) < 0) { // Procurar no lado esquerdo
+            No<T> leftChild = current.getLeftChild();
+            No<T> newLeft = removeRecursive(leftChild, value);
+            current.setLeftChild(newLeft);
+            if (newLeft != null) {
+                newLeft.setParent(current);
+            }
+        } else if (value.compareTo(currentValue) > 0) { // Procurar no lado direito
+            No<T> rightChild = current.getRightChild();
+            No<T> newRight = removeRecursive(rightChild, value);
+            current.setRightChild(newRight);
+            if (newRight != null) {
+                newRight.setParent(current);
+            }
         } else { // Encontrou o nó a ser removido
             if (current.getLeftChild() == null && current.getRightChild() == null) {
                 return null; // Nó folha
             } else if (current.getLeftChild() == null) {
-                return current.getRightChild(); // Apenas filho direito
+                No<T> onlyRight = current.getRightChild();
+                if (onlyRight != null) {
+                    onlyRight.setParent(current.parent());
+                }
+                return onlyRight; // Apenas filho direito
             } else if (current.getRightChild() == null) {
-                return current.getLeftChild(); // Apenas filho esquerdo
+                No<T> onlyLeft = current.getLeftChild();
+                if (onlyLeft != null) {
+                    onlyLeft.setParent(current.parent());
+                }
+                return onlyLeft; // Apenas filho esquerdo
             } else {
                 // Dois filhos: substituir pelo menor valor do lado direito
-                No rightChild = current.getRightChild();
-                Integer minValue = findMinValue(rightChild);
+                No<T> rightChild = current.getRightChild();
+                T minValue = findMinValue(rightChild);
                 current.setElement(minValue);
-                current.setRightChild(removeRecursive(rightChild, minValue));
+                No<T> newRight = removeRecursive(rightChild, minValue);
+                current.setRightChild(newRight);
+                if (newRight != null) {
+                    newRight.setParent(current);
+                }
             }
         }
         return current;
     }
     
-    private Integer findMinValue(No node) {
+    private T findMinValue(No<T> node) {
         while (node.getLeftChild() != null) {
             node = node.getLeftChild();
         }
-        return (Integer) node.element();
+        return node.element();
     }
 
     // Exibir a árvore
@@ -91,7 +120,7 @@ public class BinarySearchTree {
         displayRecursive(root, 0);
     }
 
-    private void displayRecursive(No node, int depth) {
+    private void displayRecursive(No<T> node, int depth) {
         if (node == null) {
             return;
         }
@@ -103,31 +132,48 @@ public class BinarySearchTree {
         displayRecursive(node.getLeftChild(), depth + 1);
     }
     
-    public No search(Integer key, No current) {
-    if (current == null) { // Caso base: Nó não encontrado
-         throw new NullPointerException("Encontramo nao man :/");
+    public No<T> search(T key) {
+        No<T> current = root;
+        ultimoPai = null;
+
+        while (current != null) {
+            int cmp = key.compareTo(current.element());
+            if (cmp == 0) {
+                return current;
+            }
+            ultimoPai = current;
+            current = (cmp < 0) ? current.getLeftChild() : current.getRightChild();
+        }
+        return null;
     }
 
-    Integer currentValue = (Integer) current.element();
+    public No<T> search(T key, No<T> current) {
+        if (current == null) {
+            return null;
+        }
 
-    if (key.equals(currentValue)) { // Caso base: Encontrou o nó
-        return current;
-    } else if (key < currentValue) { // Buscar no lado esquerdo
-        return search(key, current.getLeftChild());
-    } else { // Buscar no lado direito
+        int cmp = key.compareTo(current.element());
+
+        if (cmp == 0) {
+            return current;
+        } else if (cmp < 0) {
+            return search(key, current.getLeftChild());
+        }
         return search(key, current.getRightChild());
     }
-}
  
-    public No getRoot(){
+    public No<T> getRoot(){
 
         return root;
 
     }
 
-    public void setRoot(No root){
+    public void setRoot(No<T> root){
 
         this.root = root;
+        if (this.root != null) {
+            this.root.setParent(null);
+        }
 
     }
 
@@ -136,17 +182,23 @@ public class BinarySearchTree {
     }
     
     // Método auxiliar recursivo para espelhar a árvore
-    private No mirrorRecursive(No node) {
+    private No<T> mirrorRecursive(No<T> node) {
         if (node == null) {
             return null;
         }
     
         // Inverte os filhos esquerdo e direito
-        No left = mirrorRecursive(node.getLeftChild());
-        No right = mirrorRecursive(node.getRightChild());
+        No<T> left = mirrorRecursive(node.getLeftChild());
+        No<T> right = mirrorRecursive(node.getRightChild());
         
         node.setLeftChild(right);
+        if (right != null) {
+            right.setParent(node);
+        }
         node.setRightChild(left);
+        if (left != null) {
+            left.setParent(node);
+        }
     
         return node;
     }

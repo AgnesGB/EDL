@@ -2,38 +2,42 @@ package EDNL.AVl2;
 
 import java.util.*;
 
-public class AVLTree<T extends Comparable<? super T>> {
-    private AVLNode<T> root;
-
-    private AVLNode<T> ultimoPai;
+public class AVLTree<T extends Comparable<? super T>> extends BinarySearchTree<T> {
 
     public AVLTree() {
-        this.root = null;
-        this.ultimoPai = null;
+        super();
     }
 
+    @Override
     public AVLNode<T> getRoot(){
-        return this.root;
+        return cast(this.root);
     }
 
+    @Override
+    protected No<T> createNode(T key, No<T> pai) {
+        return new AVLNode<>(key, pai);
+    }
+
+    @Override
     public AVLNode<T> search(T data) {
-        AVLNode<T> current = root;
+        AVLNode<T> current = cast(root);
         ultimoPai = null; // Resetar o último pai antes de iniciar a busca
 
-        while (current !=null) {
-            int cmp = data.compareTo(current.data);
+        while (current != null) {
+            int cmp = data.compareTo(current.element());
             if (cmp == 0) {
                 return current;
             } 
             ultimoPai = current; // Atualizar o último pai antes de descer na árvore
-            current = (cmp < 0) ? current.left : current.right;
+            current = (cmp < 0) ? cast(current.getLeftChild()) : cast(current.getRightChild());
         }
         return null;
     }
 
+    @Override
     public void insert(T data) {
         if (root == null) {
-            root = new AVLNode<>(data);
+            root = new AVLNode<>(data, null);
             return;
         } 
 
@@ -42,44 +46,51 @@ public class AVLTree<T extends Comparable<? super T>> {
             return; // O valor já existe na árvore, não insere duplicatas
         }
 
-        AVLNode<T> novoNo = novoNo(data, ultimoPai);
-        if (data.compareTo(ultimoPai.data) < 0) {
-            ultimoPai.left = novoNo;
+        AVLNode<T> pai = cast(ultimoPai);
+        AVLNode<T> novoNo = novoNo(data, pai);
+        if (data.compareTo(pai.element()) < 0) {
+            pai.setLeftChild(novoNo);
         } else {
-            ultimoPai.right = novoNo;
+            pai.setRightChild(novoNo);
         }
 
-        balancear(ultimoPai);
+        balancear(pai);
     }
 
+    @Override
     public void delete(T data) {
         AVLNode<T> nodeToDelete = search(data);
         if (nodeToDelete == null) return; // Valor não encontrado, nada a deletar
 
-        AVLNode<T> pai = nodeToDelete.pai;
+        AVLNode<T> pai = cast(nodeToDelete.parent());
 
-        if (nodeToDelete.left == null || nodeToDelete.right == null) {
+        if (nodeToDelete.getLeftChild() == null || nodeToDelete.getRightChild() == null) {
             // Caso 1: Nó tem no máximo um filho
-            AVLNode<T> filho = (nodeToDelete.left != null) ? nodeToDelete.left : nodeToDelete.right;
+            AVLNode<T> filho = (nodeToDelete.getLeftChild() != null)
+                ? cast(nodeToDelete.getLeftChild())
+                : cast(nodeToDelete.getRightChild());
 
             if (pai == null) {
                 root = filho; // Deletando a raiz
-            } else if (pai.left == nodeToDelete) {
-                pai.left = filho;
+                if (filho != null) {
+                    filho.setParent(null);
+                }
+            } else if (pai.getLeftChild() == nodeToDelete) {
+                pai.setLeftChild(filho);
             } else {
-                pai.right = filho;
+                pai.setRightChild(filho);
             }
 
-            if (filho != null) filho.pai = pai;
+            if (filho != null) filho.setParent(pai);
         } else {
             // Caso 2: Nó tem dois filhos
-            AVLNode<T> sucessor = nodeToDelete.right;
-            while (sucessor.left != null) {
-                sucessor = sucessor.left;
+            AVLNode<T> sucessor = cast(nodeToDelete.getRightChild());
+            while (sucessor.getLeftChild() != null) {
+                sucessor = cast(sucessor.getLeftChild());
             }
-            T tempData = sucessor.data; // Guardar o valor do sucessor
-            delete(sucessor.data); // Deletar o sucessor, que tem no máximo um filho
-            nodeToDelete.data = tempData; // Substituir o valor do nó a ser deletado pelo do sucessor
+            T tempData = sucessor.element(); // Guardar o valor do sucessor
+            delete(sucessor.element()); // Deletar o sucessor, que tem no máximo um filho
+            nodeToDelete.setElement(tempData); // Substituir o valor do nó a ser deletado pelo do sucessor
         }
 
         balancear(pai);
@@ -88,7 +99,7 @@ public class AVLTree<T extends Comparable<? super T>> {
 
     // =========================== MÉTODOS DE BALANCEAMENTO ===========================
     private void update(AVLNode<T> node) {
-        node.height = Math.max(h(node.left), h(node.right)) + 1;
+        node.height = Math.max(h(cast(node.getLeftChild())), h(cast(node.getRightChild()))) + 1;
         node.balanceFactor = bf(node);
     }
 
@@ -97,32 +108,36 @@ public class AVLTree<T extends Comparable<? super T>> {
     }
 
     private int bf(AVLNode<T> n) {
-        return (n == null) ? 0 : h(n.left) - h(n.right);
+        return (n == null)
+            ? 0
+            : h(cast(n.getLeftChild())) - h(cast(n.getRightChild()));
     }
 
     private AVLNode<T> novoNo(T data, AVLNode<T> pai) {
-        AVLNode<T> novo = new AVLNode<>(data);
-        novo.pai = pai;
-        return novo;
+        return new AVLNode<>(data, pai);
     }
 
     private AVLNode<T> rotacaoEsquerda(AVLNode<T> x) {
-        AVLNode<T> y = x.right;
-        AVLNode<T> T2 = (y != null) ? y.left : null;
+        AVLNode<T> y = cast(x.getRightChild());
+        AVLNode<T> T2 = (y != null) ? cast(y.getLeftChild()) : null;
 
         // rotação
-        y.left = x;
-        y.pai = x.pai;
+        y.setLeftChild(x);
+        y.setParent(x.parent());
 
-        x.right = T2;
-        if (T2 != null) T2.pai = x;
+        x.setRightChild(T2);
+        if (T2 != null) T2.setParent(x);
 
-        x.pai = y;
+        x.setParent(y);
 
         // Reata no pai original
-        if (y.pai == null) root = y;
-        else if (y.pai.left == x) y.pai.left = y;
-        else y.pai.right = y;
+        if (y.parent() == null) {
+            root = y;
+        } else if (y.parent().getLeftChild() == x) {
+            y.parent().setLeftChild(y);
+        } else {
+            y.parent().setRightChild(y);
+        }
 
         // Atualiza alturas
         update(x);
@@ -131,22 +146,26 @@ public class AVLTree<T extends Comparable<? super T>> {
     }
 
     private AVLNode<T> rotacaoDireita(AVLNode<T> z) {
-        AVLNode<T> y = z.left;
-        AVLNode<T> T3 = (y != null) ? y.right : null;
+        AVLNode<T> y = cast(z.getLeftChild());
+        AVLNode<T> T3 = (y != null) ? cast(y.getRightChild()) : null;
 
         // Rotação
-        y.right = z;
-        y.pai = z.pai;
+        y.setRightChild(z);
+        y.setParent(z.parent());
 
-        z.left = T3;
-        if (T3 != null) T3.pai = z;
+        z.setLeftChild(T3);
+        if (T3 != null) T3.setParent(z);
 
-        z.pai = y;
+        z.setParent(y);
 
         // Reata no pai original
-        if (y.pai == null) root = y;
-        else if (y.pai.left == z) y.pai.left = y;
-        else y.pai.right = y;
+        if (y.parent() == null) {
+            root = y;
+        } else if (y.parent().getLeftChild() == z) {
+            y.parent().setLeftChild(y);
+        } else {
+            y.parent().setRightChild(y);
+        }
 
         // Atualiza alturas
         update(z);
@@ -159,11 +178,15 @@ public class AVLTree<T extends Comparable<? super T>> {
         int balance = reb.balanceFactor;
 
         if (balance > 1) { // pesado à esquerda
-            if (bf(reb.left) < 0) rotacaoEsquerda(reb.left); // caso LR
+            if (bf(cast(reb.getLeftChild())) < 0) {
+                rotacaoEsquerda(cast(reb.getLeftChild())); // caso LR
+            }
             return rotacaoDireita(reb);                  // LL
         }
         if (balance < -1) { // pesado à direita
-            if (bf(reb.right) > 0) rotacaoDireita(reb.right); // RL
+            if (bf(cast(reb.getRightChild())) > 0) {
+                rotacaoDireita(cast(reb.getRightChild())); // RL
+            }
             return rotacaoEsquerda(reb);                      // RR
         }
         return reb;
@@ -172,9 +195,8 @@ public class AVLTree<T extends Comparable<? super T>> {
     private void balancear(AVLNode<T> node) {
         AVLNode<T> n = node;
         while (n != null) {
-            AVLNode<T> paiAntigo = n.pai;
-            AVLNode<T> novoTopo = rebalance(n);
-            // se houve rotação, novoTopo pode não ser "n"; já está religado no pai dentro das rotações
+            AVLNode<T> paiAntigo = cast(n.parent());
+            rebalance(n);
             n = paiAntigo;
         }
     }
@@ -188,9 +210,9 @@ public class AVLTree<T extends Comparable<? super T>> {
             return; 
         }
 
-        int altura = root.height;
+        int altura = cast(root).height;
         List<AVLNode<T>> nivel = new ArrayList<>();
-        nivel.add(root);
+        nivel.add(cast(root));
 
         for (int depth = 1; depth <= altura; depth++) {
             int gaps = (int) Math.pow(2, altura - depth) - 1;
@@ -205,8 +227,9 @@ public class AVLTree<T extends Comparable<? super T>> {
                     System.out.print("  "); // espaço vazio
                     prox.add(null); prox.add(null);
                 } else {
-                    System.out.print(n.data);
-                    prox.add(n.left); prox.add(n.right);
+                    System.out.print(n.element());
+                    prox.add(cast(n.getLeftChild()));
+                    prox.add(cast(n.getRightChild()));
                 }
                 if (i < nivel.size() - 1) printSpaces(between);
             }
@@ -234,6 +257,9 @@ public class AVLTree<T extends Comparable<? super T>> {
         for (int i = 0; i < n; i++) System.out.print(" ");
     }
 
+    private AVLNode<T> cast(No<T> node) {
+        return (AVLNode<T>) node;
+    }
 
 
 }

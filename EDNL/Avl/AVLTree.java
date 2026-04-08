@@ -88,7 +88,7 @@ public class AVLTree<T extends Comparable<? super T>> {
         // height e fatorBalanceamento já devem começar como 1 e 0 no construtor;
         n.height = 1;
         n.fatorBalanceamento = 0;
-        return n;
+        return n; 
     }
 
     private AVLNode<T> rotateRight(AVLNode<T> z) {

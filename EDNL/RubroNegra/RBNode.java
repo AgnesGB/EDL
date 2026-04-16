@@ -1,3 +1,5 @@
+package EDNL.RubroNegra;
+
 public class RBNode<T extends Comparable<? super T>> {
     enum Color { RED, BLACK }
 

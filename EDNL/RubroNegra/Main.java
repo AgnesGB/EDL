@@ -1,4 +1,6 @@
-public class RBMain {
+package EDNL.RubroNegra;
+
+public class Main {
     public static void main(String[] args) {
         RedBlackTree<Integer> rbt2 = new RedBlackTree<>();
         int[] vals2 = {40,20,60,10,30,50,70,35};

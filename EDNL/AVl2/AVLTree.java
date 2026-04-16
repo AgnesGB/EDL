@@ -218,7 +218,6 @@ public class AVLTree<T extends Comparable<? super T>> extends BinarySearchTree<T
             int gaps = (int) Math.pow(2, altura - depth) - 1;
             int between = (int) Math.pow(2, altura - depth + 1) - 1;
 
-            // ===== PRIMEIRA LINHA: chaves =====
             printSpaces(gaps);
             List<AVLNode<T>> prox = new ArrayList<>();
             for (int i = 0; i < nivel.size(); i++) {
@@ -227,22 +226,9 @@ public class AVLTree<T extends Comparable<? super T>> extends BinarySearchTree<T
                     System.out.print("  "); // espaço vazio
                     prox.add(null); prox.add(null);
                 } else {
-                    System.out.print(n.element());
+                    System.out.print(n.element() + "(" + n.balanceFactor + ")");
                     prox.add(cast(n.getLeftChild()));
                     prox.add(cast(n.getRightChild()));
-                }
-                if (i < nivel.size() - 1) printSpaces(between);
-            }
-            System.out.println();
-
-            // ===== SEGUNDA LINHA: fatores de balanceamento =====
-            printSpaces(gaps);
-            for (int i = 0; i < nivel.size(); i++) {
-                AVLNode<T> n = nivel.get(i);
-                if (n == null) {
-                    System.out.print("  ");
-                } else {
-                    System.out.print("(" + n.balanceFactor + ")");
                 }
                 if (i < nivel.size() - 1) printSpaces(between);
             }
@@ -254,7 +240,7 @@ public class AVLTree<T extends Comparable<? super T>> extends BinarySearchTree<T
     }
 
     private void printSpaces(int n) {
-        for (int i = 0; i < n; i++) System.out.print(" ");
+        for (int i = 0; i < n; i++) System.out.print("  ");
     }
 
     private AVLNode<T> cast(No<T> node) {

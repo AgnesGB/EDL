@@ -1,4 +1,4 @@
-package EDNL.AVl2;
+package EDNL.RUBRO;
 
 import java.util.Scanner;
 
@@ -6,7 +6,7 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         
-        System.out.println("========== ÁRVORE AVL ==========");
+        System.out.println("========== ÁRVORE RUBRO-NEGRA ==========");
         System.out.println("1. Modo Automático (Testes Pré-definidos)");
         System.out.println("2. Modo Interativo (Menu Manual)");
         System.out.print("Escolha uma opção: ");
@@ -26,47 +26,32 @@ public class Main {
     
     // ===== MODO AUTOMÁTICO =====
     private static void modoAutomatico() {
-        AVLTree<Integer> arvore = new AVLTree<>();
+        RedBlackTree<Integer> arvore = new RedBlackTree<>();
         
         System.out.println("\n========== ÁRVORE VAZIA ==========");
         arvore.printTree();
         
-        int[] nums = { 42, 1, 12, 6, 2, 45 };
-        System.out.println("\n========== INSERINDO: 42, 1, 12, 6, 2, 45 ==========");
+        int[] nums = {10, 20, 30, 40, 50, 60, 70, 35};
+        System.out.println("\n========== INSERINDO: 10, 20, 30, 40, 50, 60, 70, 35 ==========");
         for (int n : nums) {
             arvore.insert(n);
         }
         arvore.printTree();
         
-        System.out.println("\n========== INSERINDO: 23 ==========");
-        arvore.insert(23);
+        System.out.println("\n========== REMOVENDO: 35 ==========");
+        arvore.remove(35);
         arvore.printTree();
         
-        System.out.println("\n========== REMOVENDO: 2 ==========");
-        arvore.delete(2);
+        System.out.println("\n========== REMOVENDO: 40 ==========");
+        arvore.remove(40);
         arvore.printTree();
         
-        System.out.println("\n========== REMOVENDO: 45 ==========");
-        arvore.delete(45);
+        System.out.println("\n========== REMOVENDO: 10 ==========");
+        arvore.remove(10);
         arvore.printTree();
         
-        System.out.println("\n========== REMOVENDO: 1 ==========");
-        arvore.delete(1);
-        arvore.printTree();
-        
-        System.out.println("\n========== INSERINDO: 34, 35, 36, 37, 38 ==========");
-        int[] nums2 = { 34, 35, 36, 37, 38 };
-        for (int n : nums2) {
-            arvore.insert(n);
-        }
-        arvore.printTree();
-        
-        System.out.println("\n========== REMOVENDO: 42 ==========");
-        arvore.delete(42);
-        arvore.printTree();
-        
-        System.out.println("\n========== INSERINDO: 68 ==========");
-        arvore.insert(68);
+        System.out.println("\n========== REMOVENDO: 30 ==========");
+        arvore.remove(30);
         arvore.printTree();
         
         System.out.println("\n========== TESTES CONCLUÍDOS ==========");
@@ -74,17 +59,16 @@ public class Main {
     
     // ===== MODO INTERATIVO =====
     private static void modoInterativo() {
-        AVLTree<Integer> arvore = new AVLTree<>();
+        RedBlackTree<Integer> arvore = new RedBlackTree<>();
         Scanner scanner = new Scanner(System.in);
         int opcao;
         
         do {
-            System.out.println("\n========== ÁRVORE AVL - MODO INTERATIVO ==========");
+            System.out.println("\n========== ÁRVORE RUBRO-NEGRA - MODO INTERATIVO ==========");
             System.out.println("1. Inserir nó");
             System.out.println("2. Remover nó");
-            System.out.println("3. Buscar nó");
-            System.out.println("4. Mostrar árvore");
-            System.out.println("5. Sair");
+            System.out.println("3. Mostrar árvore");
+            System.out.println("4. Sair");
             System.out.print("Escolha uma opção: ");
             
             opcao = scanner.nextInt();
@@ -100,31 +84,16 @@ public class Main {
                 case 2:
                     System.out.print("Digite o valor a remover: ");
                     int valorRemover = scanner.nextInt();
-                    arvore.delete(valorRemover);
+                    arvore.remove(valorRemover);
                     System.out.println("Nó removido com sucesso!");
                     break;
                     
                 case 3:
-                    System.out.print("Digite o valor a buscar: ");
-                    int valorBuscar = scanner.nextInt();
-                    try {
-                        AVLNode<Integer> encontrado = arvore.search(valorBuscar);
-                        if (encontrado != null) {
-                            System.out.println("Nó encontrado: " + valorBuscar);
-                        } else {
-                            System.out.println("Nó não encontrado!");
-                        }1
-                    } catch (Exception e) {
-                        System.out.println("Nó não encontrado!");
-                    }
-                    break;
-                    
-                case 4:
-                    System.out.println("\n--- Estrutura da Árvore AVL ---");
+                    System.out.println("\n--- Estrutura da Árvore Rubro-Negra ---");
                     arvore.printTree();
                     break;
                     
-                case 5:
+                case 4:
                     System.out.println("Encerrando...");
                     break;
                     
@@ -132,7 +101,7 @@ public class Main {
                     System.out.println("Opção inválida!");
             }
             
-        } while (opcao != 5);
+        } while (opcao != 4);
         
         scanner.close();
     }
